@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "13455900632",
+    "project_id": "reservapp-a2ad7",
+    "storage_bucket": "reservapp-a2ad7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13455900632:android:ccf9983e9932dc99557cad",
+        "android_client_info": {
+          "package_name": "com.example.reservas_theo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "13455900632-f7fud1biqcem37vfnf6khceo0dv5knop.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdyNFcY__qvl2INjtFD2sYK2OEizu18Lc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "13455900632-f7fud1biqcem37vfnf6khceo0dv5knop.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

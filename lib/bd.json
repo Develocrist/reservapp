@@ -1,0 +1,58 @@
+{
+    "usuarios":{
+        "id_usuario":{
+            "nombre": "String",
+            "correo": "String",
+            "clave" : "String",
+            "id_org": "referencia a coleccion organización" 
+        }
+    },
+
+    "actividades":{
+        "id_actividades":{
+            "nombre": "String"
+        }
+    },
+
+    "organizacion": {
+        "id_org": {
+            "nombre": "String"
+        }
+    },
+
+    "reservas":{
+        "id_reserva":{
+            "id_sala": "referencia a coleccion salas",
+            "id_usuario": "referencia a coleccion usuarios",
+            "tipo_actividad": "referencia a coleccion actividades ",
+            "fecha": "timestamp",
+            "hora_inicio":"timestamp",
+            "hora_fin": "timestamp",
+            "estado": "String",
+            "asunto_actividad": "String",
+            "asistentes": "referencia a coleccion usuario (id_usuario)"            
+        }
+    },
+
+    "salas":{
+        "id_sala":{
+            "nombre": "String",
+            "capacidad": "Int",
+            "id_organizacion": "referencia a coleccion organizacion",
+            "estado": "String",
+            "ubicacion": "geopoint"
+    },
+
+    "informes": {
+        "id_informe":{
+            "id_reserva" : "referencia a coleccion reservas",
+            "id_usuario" :"referencia a coleccion usuarios",
+            "id_sala" : "referencia a coleccion salas",
+            "fecha_generacion": "timestamp"            
+        }    
+    }
+} 
+    
+
+
+    
