@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:reservas_theo/pages/salas/details_sala_page.dart';
 import 'package:reservas_theo/register_screen.dart';
 import 'package:reservas_theo/firebase_options.dart';
 import 'package:reservas_theo/login_screen.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         "/edit": (context) => const EditRoomScreen(),
         "/see": (context) => const SeeRoomScreen(),
         "/register": (context) => const RegisterScreen(),
+        "/details_room": (context) => const DetailsRoomScreen(),
       },
     );
   }

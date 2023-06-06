@@ -6,18 +6,23 @@
             "clave" : "String",
             "id_org": "referencia a coleccion organización" 
         }
-    },
-
-    "actividades":{
-        "id_actividades":{
-            "nombre": "String"
-        }
-    },
+    },    
 
     "organizacion": {
         "id_org": {
             "nombre": "String"
         }
+    },
+    
+    "salas":{
+        "id_sala":{
+            "nombre": "String",
+            "capacidad": "Int",
+            "dimensiones": "Int",
+            "descripcion": "String",
+            "id_organizacion": "referencia a coleccion organizacion",
+            "estado": "String",
+            "ubicacion": "geopoint"
     },
 
     "reservas":{
@@ -34,14 +39,24 @@
         }
     },
 
-    "salas":{
-        "id_sala":{
-            "nombre": "String",
-            "capacidad": "Int",
-            "id_organizacion": "referencia a coleccion organizacion",
-            "estado": "String",
-            "ubicacion": "geopoint"
+    "actividades":{
+        "id_actividades":{
+            "nombre": "String"
+        }
     },
+
+    "reportes":{
+        "id_reportes":{
+            "asunto_reporte"     : "String",
+            "fecha_reporte"      : "timestamp",
+            "id_sala"            :"referencia a coleccion salas",
+            "descripcion_reporte": "String",
+            "id_usuario"         : "referencia a coleccion usuarios"
+        }
+    },
+
+
+
 
     "informes": {
         "id_informe":{

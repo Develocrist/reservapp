@@ -62,17 +62,25 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                       Container(child: Icon(Icons.delete), color: Colors.red),
                   key: Key(snapshot.data?[index]['uid']),
                   child: ListTile(
-                    title: Text(snapshot.data?[index]['nombre']),
-                    subtitle: Text(
-                        'Capacidad: ${snapshot.data?[index]['capacidad']} personas'),
-                    // onTap: (() async {
-                    //   await Navigator.pushNamed(context, '/edit');
-                    //   setState(() {});
-                    // }),
-                    onTap: () {
-                      print(snapshot.data?[index]['capacidad']);
-                    },
-                  ),
+                      title: Text(snapshot.data?[index]['nombre']),
+                      subtitle: Text(
+                          'Capacidad: ${snapshot.data?[index]['capacidad']} personas'),
+                      // onTap: (() async {
+                      //   await Navigator.pushNamed(context, '/edit');
+                      //   setState(() {});
+                      // }),
+                      onTap: () {
+                        print(snapshot.data?[index]['capacidad']);
+                      },
+                      trailing: IconButton(
+                          icon: Icon(Icons.info),
+                          onPressed: () async {
+                            await Navigator.pushNamed(context, '/details_room',
+                                arguments: {
+                                  "uid": snapshot.data?[index]['uid'],
+                                  "name": snapshot.data?[index]['nombre']
+                                });
+                          })),
                 );
               }),
             );
