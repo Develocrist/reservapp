@@ -52,7 +52,12 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text('Capacidad: ${room['capacidad']} personas.'),
-                      Text('Descripción: ${room['descripcion']}')
+                      Text('Descripción: ${room['descripcion']}'),
+                      Text('Ubicación: ${room['ubicacion']}'),
+                      Text(
+                          'Dimensiones: Alto: ${room['alto_sala']}, Ancho: ${room['ancho_sala']}, Largo: ${room['largo_sala']}'),
+                      Text(
+                          'Actividades admitidas: ${room['actividades_admitidas']}'),
                     ],
                   ),
                 );

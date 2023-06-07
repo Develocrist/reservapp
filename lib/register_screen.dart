@@ -40,24 +40,24 @@ class RegisterScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Contraseña',
               ),
               obscureText: true,
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
                 // Acción al presionar el botón de registro
               },
-              child: Text('Registrarse'),
+              child: const Text('Registrarse'),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
                 return Navigator.pop(context);
               },
-              child: Text('Volver al inicio de sesión'),
+              child: const Text('Volver al inicio de sesión'),
             ),
           ],
         ),

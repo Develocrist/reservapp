@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:reservas_theo/services/firebase_service.dart';
-import 'package:reservas_theo/services/select_image.dart';
+
 import 'package:reservas_theo/services/upload_image.dart';
 
 class AddRoomScreen extends StatefulWidget {
@@ -14,11 +16,18 @@ class AddRoomScreen extends StatefulWidget {
 }
 
 class _AddRoomScreenState extends State<AddRoomScreen> {
-  List<File?> imagesToUpload = [];
+  List<File?> imagesToUpload = []; //lista para añadir varias imagenes
+  List<String> _selectedOptions =
+      []; //lista para añadir los tipos de actividades admitidas
 
+  //se declaran las variables para cada uno de los valores a ingresar.
   TextEditingController _roomNameController = TextEditingController();
   TextEditingController _roomCapacityController = TextEditingController();
   TextEditingController _roomDescriptionController = TextEditingController();
+  TextEditingController _roomUbicacion = TextEditingController();
+  TextEditingController _roomAlto = TextEditingController();
+  TextEditingController _roomAncho = TextEditingController();
+  TextEditingController _roomLargo = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,23 +45,35 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextField(
-                controller: _roomNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre de la sala',
-                ),
+              const Text(
+                'Información General: ',
+                style: TextStyle(fontSize: 18),
               ),
-              const SizedBox(height: 16.0),
-              TextField(
-                keyboardType: TextInputType.phone,
-                controller: _roomCapacityController,
-                decoration: const InputDecoration(
-                  labelText: 'Capacidad de la sala',
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _roomNameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre',
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.phone,
+                      controller: _roomCapacityController,
+                      decoration: const InputDecoration(
+                        labelText: 'Capacidad',
+                      ),
+                    ),
+                  )
+                ],
               ),
               const SizedBox(height: 16.0),
               TextField(
@@ -61,13 +82,135 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   labelText: 'Descripción de la sala',
                 ),
               ),
+              TextField(
+                controller: _roomUbicacion,
+                decoration: const InputDecoration(
+                  labelText: 'Ubicación de la sala',
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              const Text('Dimensiones (Metros)',
+                  style: TextStyle(fontSize: 18)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _roomLargo,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: 'Largo'),
+                    ),
+                  ),
+                  SizedBox(width: 16.0),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _roomAncho,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: 'Ancho'),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _roomAlto,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(labelText: 'Alto'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              //radio buttons para los tipos de actividades que se admiten
+              const Text(
+                'Actividades admitidas',
+                style: TextStyle(fontSize: 18),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CheckboxListTile(
+                          title: const Text(
+                            'Capacitación',
+                          ),
+                          value: _selectedOptions.contains('capacitacion'),
+                          onChanged: (value) {
+                            setState(() {
+                              if (value!) {
+                                _selectedOptions.add('capacitacion');
+                              } else {
+                                _selectedOptions.remove('capacitacion');
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: CheckboxListTile(
+                          title: const Text('Talleres'),
+                          value: _selectedOptions.contains('talleres'),
+                          onChanged: (value) {
+                            setState(() {
+                              if (value!) {
+                                _selectedOptions.add('talleres');
+                              } else {
+                                _selectedOptions.remove('talleres');
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: CheckboxListTile(
+                          title: const Text('Asesorías'),
+                          value: _selectedOptions.contains('asesoria'),
+                          onChanged: (value) {
+                            setState(() {
+                              if (value!) {
+                                _selectedOptions.add('asesoria');
+                              } else {
+                                _selectedOptions.remove('asesoria');
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: CheckboxListTile(
+                          title: const Text('Reuniones'),
+                          value: _selectedOptions.contains('reuniones'),
+                          onChanged: (value) {
+                            setState(() {
+                              if (value!) {
+                                _selectedOptions.add('reuniones');
+                              } else {
+                                _selectedOptions.remove('reuniones');
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
               const SizedBox(height: 16.0),
               Column(
                 children: [
                   for (var i = 0; i < imagesToUpload.length; i++)
                     Container(
                       width: 200,
-                      height: 300,
+                      height: 200,
                       margin: const EdgeInsets.only(bottom: 5),
                       child: Stack(
                         children: [
@@ -85,7 +228,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                               onPressed: () {
                                 removeImage(i);
                               },
-                              icon: Icon(
+                              icon: const Icon(
                                 size: 30,
                                 Icons.close,
                                 color: Colors.red,
@@ -101,40 +244,61 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 onPressed: selectImages,
                 child: const Text('Agregar Imagen'),
               ),
-              ElevatedButton(
-                  onPressed: () {}, child: Text('Eliminar imagenes')),
-              ElevatedButton(
-                onPressed: () {},
-                // onPressed: () async {
-                //   if (imagesToUpload == null) {
-                //     return;
-                //   }
-                //   final uploaded = await uploadImage(imagesToUpload!);
-                //   if (uploaded) {
-                //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                //         content: Text('Imagen subida correctamente')));
-                //   } else {
-                //     ScaffoldMessenger.of(context).showSnackBar(
-                //         const SnackBar(content: Text('Error al subir imagen')));
-                //   }
-                // },
-                child: const Text('Subir imagen a firebase'),
-              ),
+              // ElevatedButton(
+              //   onPressed: () async {
+              //     if (imagesToUpload == null) {
+              //       return;
+              //     }
+              //     final uploaded = await uploadImage(imagesToUpload!);
+              //     if (uploaded) {
+              //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              //           content: Text('Imagen subida correctamente')));
+              //     } else {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(content: Text('Error al subir imagen')));
+              //     }
+              //   },
+              //   child: const Text('Subir imagen a firebase'),
+              // ),
               ElevatedButton(
                 onPressed: () async {
-                  // Acción del botón
-                  String roomName = _roomNameController.text;
-                  int roomCapacity = int.parse(_roomCapacityController.text);
-                  String roomDescription = _roomDescriptionController.text;
-                  await addSalas(roomName, roomCapacity, roomDescription).then(
+                  // Asignación de los campos en el form a variables con determinado tipo de variable para luego enviarlos a firebase_service.dart
+                  String roomName = _roomNameController.text; //nombre de sala
+                  int roomCapacity = int.parse(
+                      _roomCapacityController.text); //capacidad de sala
+                  String roomDescription =
+                      _roomDescriptionController.text; //descripcion de sala
+                  String roomLocation =
+                      _roomUbicacion.text; //ubicacion de la sala
+                  int largoRoom = int.parse(_roomLargo.text); //alto de sala
+                  int anchoRoom = int.parse(_roomAncho.text); //ancho de sala
+                  int altoRoom = int.parse(_roomAlto.text); //alto de sala
+                  List<String> actividades_admitidas = _selectedOptions;
+                  await uploadImages();
+                  addSalas(
+                    roomName,
+                    roomCapacity,
+                    roomDescription,
+                    roomLocation,
+                    largoRoom,
+                    anchoRoom,
+                    altoRoom,
+                    actividades_admitidas,
+                    //imagesToUpload
+                  ).then(
                     (_) {
                       Navigator.pop(context);
                     },
                   );
                   print('Nombre de la sala: $roomName');
                 },
-                child: const Text('Añadir sala'),
+                child: const Text('Añadir sala a firebase'),
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    print('opciones seleccionadas: $_selectedOptions');
+                  },
+                  child: const Text('Ver opciones'))
             ],
           ),
         ),

@@ -1,6 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -28,10 +29,28 @@ Future<List> getSalas() async {
 }
 
 //añadir salas a la base de datos
-Future<void> addSalas(String name, int capacity, String description) async {
-  await db
-      .collection('salas')
-      .add({"nombre": name, "capacidad": capacity, "descripcion": description});
+Future<void> addSalas(
+  String name,
+  int capacity,
+  String description,
+  String ubication,
+  int large,
+  int ancho,
+  int alto,
+  List<String> listaActividades,
+  //List<File?> imagen
+) async {
+  await db.collection('salas').add({
+    "nombre": name,
+    "capacidad": capacity,
+    "descripcion": description,
+    "ubicacion": ubication,
+    "largo_sala": large,
+    "ancho_sala": ancho,
+    "alto_sala": alto,
+    "actividades_admitidas": listaActividades,
+    //"imagenes_sala": imagen
+  });
 }
 
 //actualizar el nombre de la persona en la base de datos
