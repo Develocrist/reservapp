@@ -137,13 +137,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           title: const Text(
                             'Capacitación',
                           ),
-                          value: _selectedOptions.contains('capacitacion'),
+                          value: _selectedOptions.contains('Capacitación'),
                           onChanged: (value) {
                             setState(() {
                               if (value!) {
-                                _selectedOptions.add('capacitacion');
+                                _selectedOptions.add('Capacitación');
                               } else {
-                                _selectedOptions.remove('capacitacion');
+                                _selectedOptions.remove('Capacitación');
                               }
                             });
                           },
@@ -152,13 +152,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       Expanded(
                         child: CheckboxListTile(
                           title: const Text('Talleres'),
-                          value: _selectedOptions.contains('talleres'),
+                          value: _selectedOptions.contains('Talleres'),
                           onChanged: (value) {
                             setState(() {
                               if (value!) {
-                                _selectedOptions.add('talleres');
+                                _selectedOptions.add('Talleres');
                               } else {
-                                _selectedOptions.remove('talleres');
+                                _selectedOptions.remove('Talleres');
                               }
                             });
                           },
@@ -172,13 +172,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       Expanded(
                         child: CheckboxListTile(
                           title: const Text('Asesorías'),
-                          value: _selectedOptions.contains('asesoria'),
+                          value: _selectedOptions.contains('Asesoría'),
                           onChanged: (value) {
                             setState(() {
                               if (value!) {
-                                _selectedOptions.add('asesoria');
+                                _selectedOptions.add('Asesoría');
                               } else {
-                                _selectedOptions.remove('asesoria');
+                                _selectedOptions.remove('Asesoría');
                               }
                             });
                           },
@@ -187,13 +187,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       Expanded(
                         child: CheckboxListTile(
                           title: const Text('Reuniones'),
-                          value: _selectedOptions.contains('reuniones'),
+                          value: _selectedOptions.contains('Reuniones'),
                           onChanged: (value) {
                             setState(() {
                               if (value!) {
-                                _selectedOptions.add('reuniones');
+                                _selectedOptions.add('Reuniones');
                               } else {
-                                _selectedOptions.remove('reuniones');
+                                _selectedOptions.remove('Reuniones');
                               }
                             });
                           },

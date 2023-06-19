@@ -40,25 +40,65 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                 child: Text('No se encontró la sala.'),
               );
             }
+
             return ListView.builder(
               itemCount: 1,
               itemBuilder: ((context, index) {
-                return Card(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Nombre de sala: $nombre',
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Nombre de sala: $nombre',
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          Text('Capacidad: ${room['capacidad']} personas.'),
+                          Text('Descripción: ${room['descripcion']}'),
+                          Text('Ubicación: ${room['ubicacion']}'),
+                          Text(
+                              'Dimensiones (Metros): \nAlto: ${room['alto_sala']}, Ancho: ${room['ancho_sala']}, Largo: ${room['largo_sala']}'),
+                          Text(
+                              'Actividades admitidas: ${room['actividades_admitidas']}'),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          FloatingActionButton(
+                            backgroundColor: Colors.green,
+                            onPressed: () async {
+                              String idSala = room['uid'];
+                              print(idSala);
+                              await Navigator.pushNamed(context, '/update_room',
+                                  //se envian los argumentos para luego abrir la modificacion y que estos ya se encuentren reemplazados para su modificacion
+                                  arguments: {
+                                    "id_sala": idSala,
+                                    "nombre": snapshot.data?[index]['nombre'],
+                                    // "capacidad": snapshot.data?[index]
+                                    //     ['capacidad'],
+                                    // "descripcion": snapshot.data?[index]
+                                    //     ['descripcion'],
+                                    // "ubicacion": snapshot.data?[index]
+                                    //     ['ubicacion'],
+                                    // "alto": snapshot.data?[index]['alto_sala'],
+                                    // "ancho": snapshot.data?[index]
+                                    //     ['ancho_sala'],
+                                    // "largo": snapshot.data?[index]
+                                    //     ['largo_sala'],
+                                  });
+
+                              setState(() {});
+                            },
+                            child: const Icon(
+                              Icons.edit,
+                            ),
+                          )
+                        ],
                       ),
-                      Text('Capacidad: ${room['capacidad']} personas.'),
-                      Text('Descripción: ${room['descripcion']}'),
-                      Text('Ubicación: ${room['ubicacion']}'),
-                      Text(
-                          'Dimensiones: Alto: ${room['alto_sala']}, Ancho: ${room['ancho_sala']}, Largo: ${room['largo_sala']}'),
-                      Text(
-                          'Actividades admitidas: ${room['actividades_admitidas']}'),
-                    ],
+                    ),
                   ),
                 );
               }),

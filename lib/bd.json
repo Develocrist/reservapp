@@ -61,9 +61,11 @@
     "informes": {
         "id_informe":{
             "id_reserva" : "referencia a coleccion reservas",
+            "id_reportes": "referencia a colección reportes",
             "id_usuario" :"referencia a coleccion usuarios",
             "id_sala" : "referencia a coleccion salas",
-            "fecha_generacion": "timestamp"            
+            "fecha_inicio": "timestamp",
+            "fehca_termino": "timestamp"            
         }    
     }
 } 

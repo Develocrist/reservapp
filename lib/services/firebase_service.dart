@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_picker/image_picker.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -20,7 +17,12 @@ Future<List> getSalas() async {
       "nombre": data['nombre'],
       "uid": doc.id,
       "capacidad": data['capacidad'],
-      "descripcion": data['descripcion']
+      "descripcion": data['descripcion'],
+      "ubicacion": data['ubicacion'],
+      "alto_sala": data['alto_sala'],
+      "ancho_sala": data['ancho_sala'],
+      "largo_sala": data['largo_sala'],
+      "actividades_admitidas": data['actividades_admitidas']
     };
     salas.add(sala);
   }
@@ -54,8 +56,26 @@ Future<void> addSalas(
 }
 
 //actualizar el nombre de la persona en la base de datos
-Future<void> updateSalas(String uid, String newName) async {
-  await db.collection('salas').doc(uid).set({'name': newName});
+Future<void> updateSalas(
+    String uid,
+    String nuevoNombre,
+    int nuevaCapacidad,
+    String nuevaDescripcion,
+    String nuevaUbicacion,
+    int nuevoLargo,
+    int nuevoAncho,
+    int nuevoAlto,
+    List<String> nuevasActividades) async {
+  await db.collection('salas').doc(uid).set({
+    'nombre': nuevoNombre,
+    'descripcion': nuevaDescripcion,
+    'capacidad': nuevaCapacidad,
+    'ubicacion': nuevaUbicacion,
+    'largo_sala': nuevoLargo,
+    'ancho_sala': nuevoAncho,
+    'alto_sala': nuevoAlto,
+    'actividades_admitidas': nuevasActividades
+  });
 }
 
 Future<void> deleteSalas(String uid) async {
