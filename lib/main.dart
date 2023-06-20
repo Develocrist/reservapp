@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         "/update_room": (context) =>
             const UpdateRoomScreen(), //ruta a pantalla actualizar datos de sala
         "/seeReservation": (context) =>
-            const SeeReservation(), //ruta a pantalla ver reservas
+            SeeReservation(), //ruta a pantalla ver reservas
         "/addReservation": (context) =>
             const AddReservation(), //ruta a pantalla añadir reserva
         "/myReservation": (context) =>
