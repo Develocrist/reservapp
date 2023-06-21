@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final String nombreUsuario = arguments['nombre_usuario'];
     return Scaffold(
       appBar: AppBar(title: const Text('Menú principal'), actions: <Widget>[
-        IconButton(onPressed: () {}, icon: const Icon(Icons.logout))
+        IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/login',
+                (Route<dynamic> route) => false,
+              );
+            },
+            icon: const Icon(Icons.logout))
       ]),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -15,6 +28,7 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text('Bienvenido: $nombreUsuario'),
             CurrentDateText(),
             const Text('Reservas:'),
             Row(
@@ -34,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
@@ -107,8 +121,8 @@ class CurrentDateText extends StatelessWidget {
         '${currentDate.day.toString().padLeft(2, '0')}/${currentDate.month.toString().padLeft(2, '0')}/${currentDate.year.toString()}';
 
     return Text(
-      'Fecha actual: ' + formattedDate,
-      style: TextStyle(fontSize: 18),
+      'Fecha actual: $formattedDate',
+      style: const TextStyle(fontSize: 14),
     );
   }
 }

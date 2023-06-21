@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatelessWidget {
+  //inicializamos la instancia de verificacion en firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -18,6 +19,8 @@ class LoginScreen extends StatelessWidget {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
+      await _googleSignIn.signOut();
 
       // Iniciar sesión con las credenciales de Google en Firebase
       final UserCredential userCredential =
@@ -79,21 +82,23 @@ class LoginScreen extends StatelessWidget {
                     // El inicio de sesión fue exitoso, puedes realizar acciones adicionales aquí
                     print(
                         'Inicio de sesión exitoso: ${userCredential.user!.displayName}');
-                    Navigator.pushNamed(context, '/home');
+                    String? nombre_usuario = userCredential.user!.displayName;
+                    Navigator.pushNamed(context, '/home', arguments: {
+                      'nombre_usuario': nombre_usuario,
+                    });
                   } else {
-                    // El inicio de sesión falló
                     print('Error en inicio de sesión con Google');
                   }
                 });
               },
               child: Text('Iniciar sesión con Google'),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextButton(
               onPressed: () async {
                 await Navigator.pushNamed(context, '/register');
               },
-              child: Text('Crear cuenta'),
+              child: const Text('Crear cuenta'),
             ),
           ],
         ),
