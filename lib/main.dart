@@ -1,6 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:reservas_theo/login_test/ProviderLogin.dart';
+import 'package:reservas_theo/login_test/ProviderRegistration.dart';
+import 'package:reservas_theo/login_test/ProviderState.dart';
 
 import 'package:reservas_theo/pages/informes/informes_page.dart';
 
@@ -17,7 +21,14 @@ void main() async {
       .ensureInitialized(); //se asegura de que todas las dependencias necesitadas esten inicializadas antes de lanzar el programa
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProviderState()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +41,8 @@ class MyApp extends StatelessWidget {
       title: 'Theo App',
       initialRoute: '/login',
       routes: {
-        '/login': (context) => LoginScreen(), //ruta a pantalla login
+        '/login2': (context) => LoginScreen(), //ruta a pantalla login (antigua)
+        '/login': (context) => ProviderLogin(), //ruta a pantalla login2 prueba
         '/home': (context) => const HomeScreen(), //ruta a menu principal
         "/add": (context) =>
             const AddRoomScreen(), //ruta a pantalla añadir sala (solo administrador)
@@ -38,8 +50,10 @@ class MyApp extends StatelessWidget {
             const EditRoomScreen(), //ruta a pantalla modificar sala (solo administrador)
         "/see": (context) =>
             const SeeRoomScreen(), //ruta a pantalla visualizar salas (todos)
+        "/register2": (context) =>
+            const RegisterScreen(), //ruta a pantalla de registro de usuariov(antigua)
         "/register": (context) =>
-            const RegisterScreen(), //ruta a pantalla de registro de usuario
+            const ProviderRegistration(), //ruta a pantalla de registro de usuario
         "/details_room": (context) =>
             const DetailsRoomScreen(), //ruta a pantalla ver detalles de sala
         "/update_room": (context) =>

@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:reservas_theo/login_test/ProviderState.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> arguments =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final String nombreUsuario = arguments['nombre_usuario'];
+    //---- testeando login con provider
+
+    ProviderState providerState =
+        Provider.of<ProviderState>(context, listen: false);
+
+    //------------ login con google
+    final Map<String, dynamic>? arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+    final String nombreUsuario = arguments?['nombre_usuario'] ?? '';
     return Scaffold(
       appBar: AppBar(title: const Text('Menú principal'), actions: <Widget>[
         IconButton(
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              await FirebaseAuth.instance.signOut(); //deslogeo con google
+              providerState.signOut(); //deslogeo sin google
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 '/login',
@@ -28,7 +38,14 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Bienvenido: $nombreUsuario'),
+            Visibility(
+                visible: providerState.getEmail!.isNotEmpty,
+                child: Text(
+                    'Bienvenido: ${providerState.getEmail}')), //saludo con provider
+            Visibility(
+                visible: nombreUsuario.isNotEmpty,
+                child: Text(
+                    'Bienvenido: $nombreUsuario')), //saludo con cuenta de google
             CurrentDateText(),
             const Text('Reservas:'),
             Row(
