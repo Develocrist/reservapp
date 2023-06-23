@@ -1,11 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
+//----- clase que almacena los metodos para crear los usuarios y su validación
 class ProviderState extends ChangeNotifier {
   String? _Uid, _Email;
 
   String? get getUID => _Uid;
   String? get getEmail => _Email;
+
+  setUid(String? uid) {
+    _Uid = uid;
+    notifyListeners();
+  }
+
+  setEmail(String? email) {
+    _Email = email;
+    notifyListeners();
+  }
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -20,7 +31,9 @@ class ProviderState extends ChangeNotifier {
 
         return success = true;
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error al crear usuario: $e');
+    }
     return success;
   }
 
@@ -37,7 +50,9 @@ class ProviderState extends ChangeNotifier {
 
         return success = true;
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error al iniciar sesión de usuario: $e');
+    }
     return success;
   }
 

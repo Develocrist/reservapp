@@ -10,14 +10,23 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     //---- testeando login con provider
 
-    ProviderState providerState =
-        Provider.of<ProviderState>(context, listen: false);
+    ProviderState? providerState = Provider.of<ProviderState>(context,
+        listen: false); //obtiene una instancia del objeto ProviderState
 
     //------------ login con google
     final Map<String, dynamic>? arguments =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
     final String nombreUsuario = arguments?['nombre_usuario'] ?? '';
+
+    String welcomeMessage = ''; // mensaje de bienvenida
+
+    if (providerState != null &&
+        providerState.getEmail != null &&
+        providerState.getEmail!.isNotEmpty) {
+      welcomeMessage = 'Bienvenido: ${providerState.getEmail!}';
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Menú principal'), actions: <Widget>[
         IconButton(
@@ -38,14 +47,15 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Visibility(
-                visible: providerState.getEmail!.isNotEmpty,
-                child: Text(
-                    'Bienvenido: ${providerState.getEmail}')), //saludo con provider
-            Visibility(
-                visible: nombreUsuario.isNotEmpty,
-                child: Text(
-                    'Bienvenido: $nombreUsuario')), //saludo con cuenta de google
+            if (welcomeMessage.isNotEmpty) Text(welcomeMessage),
+            // Visibility(
+            //     visible: providerState.getEmail!.isNotEmpty,
+            //     child: Text(
+            //         'Bienvenido: ${providerState.getEmail}')), //saludo con provider
+            // Visibility(
+            //     visible: nombreUsuario.isNotEmpty,
+            //     child: Text(
+            //         'Bienvenido: $nombreUsuario')), //saludo con cuenta de google
             CurrentDateText(),
             const Text('Reservas:'),
             Row(

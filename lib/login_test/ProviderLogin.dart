@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:reservas_theo/home_screen.dart';
-import 'package:reservas_theo/login_screen.dart';
+import 'package:reservas_theo/login_test/ProviderRegistration.dart';
 import 'package:reservas_theo/login_test/ProviderState.dart';
 
 class ProviderLogin extends StatefulWidget {
@@ -98,10 +98,11 @@ class _ProviderLoginState extends State<ProviderLogin> {
                     print(
                         'Inicio de sesión exitoso: ${userCredential.user!.displayName}');
                     String? nombre_usuario = userCredential.user!.displayName;
-                    Navigator.pushNamed(context, '/home', arguments: {
+                    Navigator.popAndPushNamed(context, '/home', arguments: {
                       'nombre_usuario': nombre_usuario,
                     });
                   } else {
+                    ErrorIngreso();
                     print('Error en inicio de sesión con Google');
                   }
                 });
@@ -111,8 +112,10 @@ class _ProviderLoginState extends State<ProviderLogin> {
             const SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProviderRegistration()));
               },
               child: const Text('Crear cuenta'),
             ),
@@ -135,5 +138,16 @@ class _ProviderLoginState extends State<ProviderLogin> {
             ));
       }
     } catch (e) {}
+  }
+}
+
+class ErrorIngreso extends StatelessWidget {
+  const ErrorIngreso({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SnackBar(
+      content: Text('Error al ingresar con Google'),
+    );
   }
 }

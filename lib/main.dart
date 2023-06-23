@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         "/seeReservation": (context) =>
             SeeReservation(), //ruta a pantalla ver reservas
         "/addReservation": (context) =>
-            const AddReservation(), //ruta a pantalla añadir reserva
+            AddReservation(), //ruta a pantalla añadir reserva
         "/myReservation": (context) =>
             const MyReservation(), //ruta a pantalla añadir reserva
         "/informes": (context) =>
