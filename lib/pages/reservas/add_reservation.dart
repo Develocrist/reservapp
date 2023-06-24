@@ -1,11 +1,10 @@
 //CODIFICACION DE VISTA DONDE SE REALIZARAN TODAS LAS RESERVAS QUE EL USUARIO DESEE
 
-//19/06: POR AHORA SOLO EL ESQUELETO
-
-import 'dart:html';
+// POR AHORA SOLO EL ESQUELETO, 23/06, falta incorporar la seleccion de una fecha
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AddReservation extends StatefulWidget {
   @override
@@ -20,6 +19,8 @@ class _AddReservationState extends State<AddReservation> {
   List<String> _rooms =
       []; // Lista de salas disponibles, las cuales deben ser importadas desde firebase
 
+  rangoTiempo?
+      _selectedTimeRange; //variable para almacenar el bloque horario seleccionado
   //bloques de horario predefinidos
   List<rangoTiempo> _rangoTiempo = [
     rangoTiempo(
@@ -30,7 +31,21 @@ class _AddReservationState extends State<AddReservation> {
       inicioBloque: TimeOfDay(hour: 10, minute: 15),
       finBloque: TimeOfDay(hour: 12, minute: 00),
     ),
+    rangoTiempo(
+      inicioBloque: TimeOfDay(hour: 12, minute: 15),
+      finBloque: TimeOfDay(hour: 14, minute: 00),
+    ),
+    rangoTiempo(
+      inicioBloque: TimeOfDay(hour: 14, minute: 15),
+      finBloque: TimeOfDay(hour: 16, minute: 00),
+    ),
+    rangoTiempo(
+      inicioBloque: TimeOfDay(hour: 16, minute: 15),
+      finBloque: TimeOfDay(hour: 18, minute: 00),
+    ),
   ]; //falta implementarlo en el formulario de reserva de salas
+
+  DateTime? _selectedDate; //variable que almacenara la fecha
 
   //metodo para inicializar el otro metodo que realiza la solicitud de las salas
   @override
@@ -53,19 +68,49 @@ class _AddReservationState extends State<AddReservation> {
     }
   }
 
+  //metodo para seleccionar una fecha
+  Future<void> selectedDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
+
 //aqui necesito incorporar las salas creadas en la base de datos
 
   @override
   Widget build(BuildContext context) {
-    print('Salas cargadas: $_rooms');
+    print(
+        'Salas cargadas: $_rooms'); //verifica e imprime si se cargaron las salas
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reservar Sala'),
+        title: const Text('Reservar Sala'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            //campo para seleccionar fecha
+            TextButton(
+              onPressed: () {
+                selectedDate(context);
+              },
+              child: Text(
+                _selectedDate != null
+                    ? 'Fecha seleccionada: ${DateFormat('dd/MM/yyyy').format(_selectedDate!)}'
+                    : 'Seleccionar fecha',
+              ),
+            ),
+
+            //campo para ingresar el asunto
             TextField(
               decoration: InputDecoration(labelText: 'Asunto'),
               onChanged: (value) {
@@ -74,7 +119,7 @@ class _AddReservationState extends State<AddReservation> {
                 });
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextField(
               decoration: InputDecoration(labelText: 'Descripción'),
               onChanged: (value) {
@@ -83,42 +128,28 @@ class _AddReservationState extends State<AddReservation> {
                 });
               },
             ),
-            SizedBox(height: 16.0),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     showDatePicker(
-            //       context: context,
-            //       initialDate: DateTime.now(),
-            //       firstDate: DateTime.now(),
-            //       lastDate: DateTime(2100),
-            //     ).then((selectedDate) {
-            //       if (selectedDate != null) {
-            //         showTimePicker(
-            //           context: context,
-            //           initialTime: TimeOfDay.now(),
-            //         ).then((selectedTime) {
-            //           if (selectedTime != null) {
-            //             setState(() {
-            //               _selectedDateTime = DateTime(
-            //                 selectedDate.year,
-            //                 selectedDate.month,
-            //                 selectedDate.day,
-            //                 selectedTime.hour,
-            //                 selectedTime.minute,
-            //               );
-            //             });
-            //           }
-            //         });
-            //       }
-            //     });
-            //   },
-            //   child: Text('Seleccionar Fecha y Bloque Horario'),
-            // ),
-            // SizedBox(height: 16.0),
-
+            const SizedBox(height: 16.0),
+            DropdownButtonFormField<rangoTiempo>(
+              value: _selectedTimeRange,
+              decoration: const InputDecoration(
+                  labelText: 'Seleccionar bloque horario'),
+              items: _rangoTiempo.map((rango) {
+                return DropdownMenuItem<rangoTiempo>(
+                  value: rango,
+                  child: Text(
+                    '${rango.inicioBloque.format(context)} - ${rango.finBloque.format(context)}',
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedTimeRange = value;
+                });
+              },
+            ),
             DropdownButtonFormField<String>(
               value: _salaSeleccionada,
-              decoration: InputDecoration(labelText: 'Sala'),
+              decoration: const InputDecoration(labelText: 'Seleccionar sala'),
               items: _rooms.map((room) {
                 return DropdownMenuItem<String>(
                   value: room,
@@ -131,18 +162,30 @@ class _AddReservationState extends State<AddReservation> {
                 });
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                if (_selectedDateTime != null && _salaSeleccionada != null) {
+                if (_selectedDate != null &&
+                    _salaSeleccionada != null &&
+                    _selectedTimeRange != null) {
                   // Acción al reservar la sala
+                  print('exito en la reserva?');
                   print('Reservación realizada:');
+                  print('Fecha seleccionada: $_selectedDate');
                   print('Asunto: $_asunto');
                   print('Descripción: $_description');
-                  print('Fecha y Bloque Horario: $_selectedDateTime');
+                  print(
+                      'Bloque Horario seleccionado: ${_selectedTimeRange?.inicioBloque.format(context)} - ${_selectedTimeRange?.finBloque.format(context)}');
                   print('Sala: $_salaSeleccionada');
                 } else {
                   // Validación de campos
+                  print('Reservación realizada:');
+                  print('Fecha seleccionada: $_selectedDate');
+                  print('Asunto: $_asunto');
+                  print('Descripción: $_description');
+                  print(
+                      'Bloque Horario seleccionado: ${_selectedTimeRange?.inicioBloque.format(context)} - ${_selectedTimeRange?.finBloque.format(context)}');
+                  print('Sala: $_salaSeleccionada');
                   print('Por favor, complete todos los campos');
                 }
               },
