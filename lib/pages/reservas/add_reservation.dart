@@ -19,27 +19,27 @@ class _AddReservationState extends State<AddReservation> {
   List<String> _rooms =
       []; // Lista de salas disponibles, las cuales deben ser importadas desde firebase
 
-  rangoTiempo?
+  RangoTiempo?
       _selectedTimeRange; //variable para almacenar el bloque horario seleccionado
   //bloques de horario predefinidos
-  List<rangoTiempo> _rangoTiempo = [
-    rangoTiempo(
+  List<RangoTiempo> _rangoTiempo = [
+    RangoTiempo(
       inicioBloque: TimeOfDay(hour: 8, minute: 15),
       finBloque: TimeOfDay(hour: 10, minute: 00),
     ),
-    rangoTiempo(
+    RangoTiempo(
       inicioBloque: TimeOfDay(hour: 10, minute: 15),
       finBloque: TimeOfDay(hour: 12, minute: 00),
     ),
-    rangoTiempo(
+    RangoTiempo(
       inicioBloque: TimeOfDay(hour: 12, minute: 15),
       finBloque: TimeOfDay(hour: 14, minute: 00),
     ),
-    rangoTiempo(
+    RangoTiempo(
       inicioBloque: TimeOfDay(hour: 14, minute: 15),
       finBloque: TimeOfDay(hour: 16, minute: 00),
     ),
-    rangoTiempo(
+    RangoTiempo(
       inicioBloque: TimeOfDay(hour: 16, minute: 15),
       finBloque: TimeOfDay(hour: 18, minute: 00),
     ),
@@ -112,7 +112,7 @@ class _AddReservationState extends State<AddReservation> {
 
             //campo para ingresar el asunto
             TextField(
-              decoration: InputDecoration(labelText: 'Asunto'),
+              decoration: const InputDecoration(labelText: 'Asunto'),
               onChanged: (value) {
                 setState(() {
                   _asunto = value;
@@ -121,7 +121,7 @@ class _AddReservationState extends State<AddReservation> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              decoration: InputDecoration(labelText: 'Descripción'),
+              decoration: const InputDecoration(labelText: 'Descripción'),
               onChanged: (value) {
                 setState(() {
                   _description = value;
@@ -129,12 +129,12 @@ class _AddReservationState extends State<AddReservation> {
               },
             ),
             const SizedBox(height: 16.0),
-            DropdownButtonFormField<rangoTiempo>(
+            DropdownButtonFormField<RangoTiempo>(
               value: _selectedTimeRange,
               decoration: const InputDecoration(
                   labelText: 'Seleccionar bloque horario'),
               items: _rangoTiempo.map((rango) {
-                return DropdownMenuItem<rangoTiempo>(
+                return DropdownMenuItem<RangoTiempo>(
                   value: rango,
                   child: Text(
                     '${rango.inicioBloque.format(context)} - ${rango.finBloque.format(context)}',
@@ -147,6 +147,7 @@ class _AddReservationState extends State<AddReservation> {
                 });
               },
             ),
+            const SizedBox(height: 16.0),
             DropdownButtonFormField<String>(
               value: _salaSeleccionada,
               decoration: const InputDecoration(labelText: 'Seleccionar sala'),
@@ -198,9 +199,9 @@ class _AddReservationState extends State<AddReservation> {
   }
 }
 
-class rangoTiempo {
+class RangoTiempo {
   final TimeOfDay inicioBloque;
   final TimeOfDay finBloque;
 
-  rangoTiempo({required this.inicioBloque, required this.finBloque});
+  RangoTiempo({required this.inicioBloque, required this.finBloque});
 }

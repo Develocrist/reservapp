@@ -58,8 +58,8 @@ class _ProviderLoginState extends State<ProviderLogin> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
-              'Inicio de sesión',
+            const Text(
+              'Login a TheoApp',
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -84,8 +84,31 @@ class _ProviderLoginState extends State<ProviderLogin> {
             SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
-                _login(email.text, pass.text);
+                if (email.text.isNotEmpty && pass.text.isNotEmpty) {
+                  _login(email.text, pass.text);
+                } else {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Error al Ingresar'),
+                          content: const Text(
+                              'Rellene los campos y asegurese de que sean credenciales válidas.'),
+                          actions: <Widget>[
+                            TextButton(
+                                child: const Text('Aceptar'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                }),
+                          ],
+                        );
+                      });
+                }
               },
+              // onPressed: () {
+              //   Navigator.pushNamed(context,
+              //       '/home'); // lo de arriba activa el ingreso con credenciales, con finalidades de prueba se habilita el ingreso directo
+              // },
               child: Text('Iniciar sesión'),
             ),
             SizedBox(height: 16.0),
@@ -119,6 +142,7 @@ class _ProviderLoginState extends State<ProviderLogin> {
               },
               child: const Text('Crear cuenta'),
             ),
+            const Text('V1.0.0') //versión actual de la aplicación
           ],
         ),
       ),
@@ -130,14 +154,16 @@ class _ProviderLoginState extends State<ProviderLogin> {
         Provider.of<ProviderState>(context, listen: false);
 
     try {
-      if (await providerState.SignInUserAccount(email, password)) {
+      if (await providerState.signInUserAccount(email, password)) {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomeScreen(),
+              builder: (context) => const HomeScreen(),
             ));
       }
-    } catch (e) {}
+    } catch (e) {
+      print('error al iniciar con provider: $e');
+    }
   }
 }
 

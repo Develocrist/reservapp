@@ -39,12 +39,12 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
+            const Text(
               'Inicio de sesión',
               style: TextStyle(
                 fontSize: 24.0,
@@ -54,13 +54,13 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Correo electrónico',
               ),
             ),
             SizedBox(height: 16.0),
             TextFormField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Contraseña',
               ),
               obscureText: true,

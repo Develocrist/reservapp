@@ -7,8 +7,12 @@ import 'package:reservas_theo/login_test/ProviderRegistration.dart';
 import 'package:reservas_theo/login_test/ProviderState.dart';
 
 import 'package:reservas_theo/pages/informes/informes_page.dart';
+import 'package:reservas_theo/pages/reports/add_report_screen.dart';
+import 'package:reservas_theo/pages/reports/report_screen.dart';
+import 'package:reservas_theo/pages/reservas/add_reservation2.dart';
 
 import 'package:reservas_theo/pages/reservas/reservas.dart'; //vistas respectivas a reservas
+import 'package:reservas_theo/pages/reservas/see_reservation2.dart';
 
 import 'package:reservas_theo/register_screen.dart';
 import 'package:reservas_theo/firebase_options.dart';
@@ -38,11 +42,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Theo App',
+      title: 'TheoApp',
       initialRoute: '/login',
       routes: {
         '/login2': (context) => LoginScreen(), //ruta a pantalla login (antigua)
-        '/login': (context) => ProviderLogin(), //ruta a pantalla login2 prueba
+        '/login': (context) =>
+            ProviderLogin(), //ruta a pantalla login2 <--- en uso actual
         '/home': (context) => const HomeScreen(), //ruta a menu principal
         "/add": (context) =>
             const AddRoomScreen(), //ruta a pantalla añadir sala (solo administrador)
@@ -62,10 +67,21 @@ class MyApp extends StatelessWidget {
             SeeReservation(), //ruta a pantalla ver reservas
         "/addReservation": (context) =>
             AddReservation(), //ruta a pantalla añadir reserva
+
+        "/addReservation2": (context) =>
+            ReservationScreen2(), //ruta a pantalla añadir reserva 2
         "/myReservation": (context) =>
             const MyReservation(), //ruta a pantalla añadir reserva
         "/informes": (context) =>
             const Informes(), //ruta a pantalla de informes (solo administrador)
+
+        "/createReservation": (context) =>
+            ReservationScreen(), //nueva interfaz para reservas (prueba)
+
+        "/reports": (context) =>
+            ReportScreen(), //interfaz para visualizar los reportes
+        "/addReport": (context) =>
+            AddReport(), //interfaz para añadir un reporte
       },
     );
   }

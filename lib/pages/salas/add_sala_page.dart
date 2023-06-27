@@ -16,7 +16,7 @@ class AddRoomScreen extends StatefulWidget {
 
 class _AddRoomScreenState extends State<AddRoomScreen> {
   List<File?> imagesToUpload = []; //lista para añadir varias imagenes
-  List<String> _selectedOptions =
+  final List<String> _selectedOptions =
       []; //lista para añadir los tipos de actividades admitidas
 
   //se declaran las variables para cada uno de los valores a ingresar.
@@ -50,7 +50,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
             children: [
               const Text(
                 'Información General: ',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 16),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +89,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
               ),
               const SizedBox(height: 16.0),
               const Text('Dimensiones (Metros)',
-                  style: TextStyle(fontSize: 18)),
+                  style: TextStyle(fontSize: 16)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -123,7 +123,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
               //radio buttons para los tipos de actividades que se admiten
               const Text(
                 'Actividades admitidas',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 16),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -133,6 +133,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                     children: [
                       Expanded(
                         child: CheckboxListTile(
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 0.5),
                           title: const Text(
                             'Capacitación',
                           ),
@@ -150,6 +152,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       ),
                       Expanded(
                         child: CheckboxListTile(
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 0.5),
                           title: const Text('Talleres'),
                           value: _selectedOptions.contains('Talleres'),
                           onChanged: (value) {
@@ -170,6 +174,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                     children: [
                       Expanded(
                         child: CheckboxListTile(
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 0.5),
                           title: const Text('Asesorías'),
                           value: _selectedOptions.contains('Asesoría'),
                           onChanged: (value) {
@@ -185,6 +191,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       ),
                       Expanded(
                         child: CheckboxListTile(
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 0.5),
                           title: const Text('Reuniones'),
                           value: _selectedOptions.contains('Reuniones'),
                           onChanged: (value) {
@@ -293,11 +301,11 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 },
                 child: const Text('Añadir sala a firebase'),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    print('opciones seleccionadas: $_selectedOptions');
-                  },
-                  child: const Text('Ver opciones'))
+              // ElevatedButton(
+              //     onPressed: () {
+              //       print('opciones seleccionadas: $_selectedOptions');
+              //     },
+              //     child: const Text('Ver opciones')),
             ],
           ),
         ),

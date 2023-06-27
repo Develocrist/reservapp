@@ -57,7 +57,10 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                 iconSize: 40,
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await Navigator.pushNamed(context, '/reports');
+                  setState(() {});
+                },
                 icon: Icon(Icons.report_gmailerrorred),
                 iconSize: 40,
               )
@@ -125,18 +128,24 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                           child: Icon(Icons.delete), color: Colors.red),
                       key: Key(snapshot.data?[index]['uid']),
                       child: ListTile(
-                          title: Text(filteredList[index]),
-                          subtitle: const Text('Estado actual: Disponible'),
-                          //    'Ubicación: ${snapshot.data?[index]['ubicacion']}'),
-                          // onTap: (() async {
-                          //   await Navigator.pushNamed(context, '/edit');
-                          //   setState(() {});
-                          // }),
-                          onTap: () {
-                            print(snapshot.data?[index]['capacidad']);
-                          },
-                          trailing: IconButton(
-                              icon: Icon(Icons.info),
+                        title: Text(filteredList[index]),
+                        subtitle: const Text('Estado actual: por asignar'),
+                        //    'Ubicación: ${snapshot.data?[index]['ubicacion']}'),
+                        // onTap: (() async {
+                        //   await Navigator.pushNamed(context, '/edit');
+                        //   setState(() {});
+                        // }),
+                        onTap: () {
+                          print(snapshot.data?[index]['capacidad']);
+                        },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.info_outline,
+                                color: Colors.blue,
+                              ),
                               onPressed: () async {
                                 print(snapshot.data?[index]['uid']);
                                 await Navigator.pushNamed(
@@ -144,7 +153,23 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                                   "uid": snapshot.data?[index]['uid'],
                                   "name": snapshot.data?[index]['nombre']
                                 });
-                              })),
+                              },
+                            ),
+                            IconButton(
+                                onPressed: () async {
+                                  await Navigator.pushNamed(
+                                      context, '/addReport', arguments: {
+                                    "uid": snapshot.data?[index]['uid'],
+                                    "name": snapshot.data?[index]['nombre']
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.report_gmailerrorred,
+                                  color: Colors.red,
+                                ))
+                          ],
+                        ),
+                      ),
                     );
                   }),
                 );
