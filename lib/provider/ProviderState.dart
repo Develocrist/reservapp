@@ -1,17 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 //----- clase que almacena los metodos para crear los usuarios y su validación
 class ProviderState extends ChangeNotifier {
-  String? _Uid, _email;
+  String? _uid, _email, _role;
 
-  String? get getUID => _Uid;
+  String? get getRole => _role;
+  String? get getUID => _uid;
   String? get getEmail => _email;
 
   setUid(String? uid) {
-    _Uid = uid;
-    notifyListeners();
+    _uid = uid;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   setEmail(String? email) {
@@ -19,9 +23,14 @@ class ProviderState extends ChangeNotifier {
     notifyListeners();
   }
 
+  setRole(String? role) {
+    _role = role;
+    notifyListeners();
+  }
+
 //actualizar correo
   void updateEmail(String? email) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _email = email;
       notifyListeners();
     });
@@ -29,21 +38,27 @@ class ProviderState extends ChangeNotifier {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<bool> createUserAccount(String email, String password) async {
+  Future<bool> createUserAccount(
+      String email, String password, String role) async {
+    //metodo de firebase para crear el usuario, necesito incorporar el rol para despues recuperarlo
     bool success = false;
     try {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      if (userCredential != null) {
-        _Uid = userCredential.user?.uid;
-        _email = userCredential.user?.email;
+      _uid = userCredential.user?.uid;
+      _email = userCredential.user?.email;
 
-        return success = true;
-      }
+      //asignar el rol de usuario al documento en firestore
+      await FirebaseFirestore.instance.collection('users').doc(_uid).set({
+        'uid': _uid,
+        'role': role,
+      });
+
+      return success = true;
     } catch (e) {
       success = false;
 
-      print('Error al crear usuario: $e');
+      //print('Error al crear usuario: $e');
     }
     return success;
   }
@@ -55,12 +70,10 @@ class ProviderState extends ChangeNotifier {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      if (userCredential != null) {
-        _Uid = userCredential.user?.uid;
-        _email = userCredential.user?.email;
+      _uid = userCredential.user?.uid;
+      _email = userCredential.user?.email;
 
-        return success = true;
-      }
+      return success = true;
     } catch (e) {
       print('Error al iniciar sesión de usuario: $e');
     }

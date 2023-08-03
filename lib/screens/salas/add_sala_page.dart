@@ -3,13 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:reservas_theo/services/firebase_service.dart';
+import 'package:reservas_theo/servicios/firebase_service.dart';
 
-import 'package:reservas_theo/services/upload_image.dart';
+import 'package:reservas_theo/servicios/upload_image.dart';
 
 class AddRoomScreen extends StatefulWidget {
   const AddRoomScreen({Key? key}) : super(key: key);
-
   @override
   State<AddRoomScreen> createState() => _AddRoomScreenState();
 }
@@ -20,13 +19,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       []; //lista para añadir los tipos de actividades admitidas
 
   //se declaran las variables para cada uno de los valores a ingresar.
-  TextEditingController _roomNameController = TextEditingController();
-  TextEditingController _roomCapacityController = TextEditingController();
-  TextEditingController _roomDescriptionController = TextEditingController();
-  TextEditingController _roomUbicacion = TextEditingController();
-  TextEditingController _roomAlto = TextEditingController();
-  TextEditingController _roomAncho = TextEditingController();
-  TextEditingController _roomLargo = TextEditingController();
+  TextEditingController roomNameController = TextEditingController();
+  TextEditingController roomCapacityController = TextEditingController();
+  TextEditingController roomDescriptionController = TextEditingController();
+  TextEditingController roomUbicacion = TextEditingController();
+  TextEditingController roomAlto = TextEditingController();
+  TextEditingController roomAncho = TextEditingController();
+  TextEditingController roomLargo = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +56,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: _roomNameController,
+                      controller: roomNameController,
                       decoration: const InputDecoration(
                         labelText: 'Nombre',
                       ),
@@ -66,7 +65,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   Expanded(
                     child: TextField(
                       keyboardType: TextInputType.phone,
-                      controller: _roomCapacityController,
+                      controller: roomCapacityController,
                       decoration: const InputDecoration(
                         labelText: 'Capacidad',
                       ),
@@ -76,13 +75,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
               ),
               const SizedBox(height: 16.0),
               TextField(
-                controller: _roomDescriptionController,
+                controller: roomDescriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Descripción de la sala',
                 ),
               ),
               TextField(
-                controller: _roomUbicacion,
+                controller: roomUbicacion,
                 decoration: const InputDecoration(
                   labelText: 'Ubicación de la sala',
                 ),
@@ -95,7 +94,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 children: [
                   Expanded(
                     child: TextFormField(
-                      controller: _roomLargo,
+                      controller: roomLargo,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(labelText: 'Largo'),
                     ),
@@ -103,14 +102,14 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   SizedBox(width: 16.0),
                   Expanded(
                     child: TextFormField(
-                      controller: _roomAncho,
+                      controller: roomAncho,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(labelText: 'Ancho'),
                     ),
                   ),
                   Expanded(
                     child: TextFormField(
-                      controller: _roomAlto,
+                      controller: roomAlto,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(labelText: 'Alto'),
                     ),
@@ -270,42 +269,45 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
               ElevatedButton(
                 onPressed: () async {
                   // Asignación de los campos en el form a variables con determinado tipo de variable para luego enviarlos a firebase_service.dart
-                  String roomName = _roomNameController.text; //nombre de sala
+                  String roomName = roomNameController.text; //nombre de sala
                   int roomCapacity = int.parse(
-                      _roomCapacityController.text); //capacidad de sala
+                      roomCapacityController.text); //capacidad de sala
                   String roomDescription =
-                      _roomDescriptionController.text; //descripcion de sala
+                      roomDescriptionController.text; //descripcion de sala
                   String roomLocation =
-                      _roomUbicacion.text; //ubicacion de la sala
-                  int largoRoom = int.parse(_roomLargo.text); //alto de sala
-                  int anchoRoom = int.parse(_roomAncho.text); //ancho de sala
-                  int altoRoom = int.parse(_roomAlto.text); //alto de sala
+                      roomUbicacion.text; //ubicacion de la sala
+                  int largoRoom = int.parse(roomLargo.text); //alto de sala
+                  int anchoRoom = int.parse(roomAncho.text); //ancho de sala
+                  int altoRoom = int.parse(roomAlto.text); //alto de sala
                   List<String> actividades_admitidas = _selectedOptions;
+
+                  String estado = 'Disponible';
+                  //String urlImagen = 'https://i.ibb.co/s36ySMD/sala1.jpg';
+
                   await uploadImages();
                   addSalas(
-                    roomName,
-                    roomCapacity,
-                    roomDescription,
-                    roomLocation,
-                    largoRoom,
-                    anchoRoom,
-                    altoRoom,
-                    actividades_admitidas,
-                    //imagesToUpload
-                  ).then(
+                          roomName,
+                          roomCapacity,
+                          roomDescription,
+                          roomLocation,
+                          largoRoom,
+                          anchoRoom,
+                          altoRoom,
+                          actividades_admitidas,
+                          estado)
+                      .then(
                     (_) {
                       Navigator.pop(context);
                     },
                   );
-                  print('Nombre de la sala: $roomName');
                 },
                 child: const Text('Añadir sala a firebase'),
               ),
-              // ElevatedButton(
-              //     onPressed: () {
-              //       print('opciones seleccionadas: $_selectedOptions');
-              //     },
-              //     child: const Text('Ver opciones')),
+              ElevatedButton(
+                  onPressed: () {
+                    uploadImages();
+                  },
+                  child: const Text('Subir imagen')),
             ],
           ),
         ),
@@ -315,9 +317,9 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
 
   @override
   void dispose() {
-    _roomNameController.dispose();
-    _roomCapacityController.dispose();
-    _roomDescriptionController.dispose();
+    roomNameController.dispose();
+    roomCapacityController.dispose();
+    roomDescriptionController.dispose();
     super.dispose();
   }
 
@@ -352,23 +354,4 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       imagesToUpload.removeAt(index);
     });
   }
-
-  // Future<void> addRoom() async {
-  //   String roomName = _roomNameController.text;
-  //   int roomCapacity = int.parse(_roomCapacityController.text);
-  //   String roomDescription = _roomDescriptionController.text;
-
-  //   // Subir imágenes y obtener URLs
-  //   List<String> imageUrls = [];
-  //   for (final imageFile in imagesToUpload) {
-  //     final imageUrl = await uploadImage(imageFile!); // Reemplazar con la función de subida de imágenes
-  //     imageUrls.add(imageUrl);
-  //   }
-
-  //   // Guardar formulario en Firestore junto con las URLs de las imágenes
-  //   await addSalas(roomName, roomCapacity, roomDescription, imageUrls);
-
-  //   Navigator.pop(context);
-  // }
-
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reservas_theo/services/firebase_service.dart';
+import 'package:reservas_theo/servicios/firebase_service.dart';
 
 class DetailsRoomScreen extends StatefulWidget {
   const DetailsRoomScreen({Key? key}) : super(key: key);
@@ -61,10 +61,20 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                           Text('Descripción: ${room['descripcion']}'),
                           Text('Ubicación: ${room['ubicacion']}'),
                           Text(
-                              'Dimensiones (Metros): \nAlto: ${room['alto_sala']}, Ancho: ${room['ancho_sala']}, Largo: ${room['largo_sala']}'),
+                              'Dimensiones (Metros): \nAlto: ${room['alto_sala']} MT , Ancho: ${room['ancho_sala']} MT, Largo: ${room['largo_sala']} MT'),
                           Text(
                               'Actividades admitidas: ${room['actividades_admitidas']}'),
-                          SizedBox(
+                          Text('Estado actual: ${room['estado']}'),
+                          Container(
+                            width: 300,
+                            height: 200,
+                            //color: Colors.red,
+                            child: Image.network(
+                              'https://i.ibb.co/s36ySMD/sala1.jpg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(
                             height: 20,
                           ),
                           FloatingActionButton(

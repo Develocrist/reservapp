@@ -8,10 +8,10 @@ class Informes extends StatefulWidget {
   const Informes({Key? key}) : super(key: key);
 
   @override
-  State<Informes> createState() => _InformesState();
+  State<Informes> createState() => InformesState();
 }
 
-class _InformesState extends State<Informes> {
+class InformesState extends State<Informes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

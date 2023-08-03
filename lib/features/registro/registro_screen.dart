@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:reservas_theo/login_test/ProviderLogin.dart';
-import 'package:reservas_theo/login_test/ProviderState.dart';
+import 'package:reservas_theo/features/login/login_screen.dart';
+import 'package:reservas_theo/features/widgets/ui.dart';
+import 'package:reservas_theo/provider/ProviderState.dart';
 
 class ProviderRegistration extends StatefulWidget {
   const ProviderRegistration({super.key});
@@ -96,28 +97,43 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                       //validacion de la organización, se debe cambiar por algo mas profesional
                       final String organizacionText = organizacion.text;
 
+                      //registro de usuario con rol de usuario
                       if (correo.text.isNotEmpty &&
                           password.text.isNotEmpty &&
                           organizacionText.toLowerCase().contains('umd')) {
-                        registerUser(correo.text, password.text, context);
+                        String rol = 'Usuario común';
+                        registerUser(correo.text, password.text, rol, context);
+                        SnackbarHelper.showSnackbar(
+                            context, 'Registro de Usuario exitoso');
+                      } //registro de usuario con rol de administrador
+                      else if (correo.text.isNotEmpty &&
+                          password.text.isNotEmpty &&
+                          organizacionText
+                              .toLowerCase()
+                              .contains('admi_theoapp')) {
+                        String rol = 'Administrador';
+                        registerUser(correo.text, password.text, rol, context);
+                        SnackbarHelper.showSnackbar(
+                            context, 'Registro de Administrador exitoso');
                       } else {
                         //si la organización no es valida entonces se muestra una alerta
                         showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Error al registrar'),
-                                content: const Text(
-                                    'Porfavor, ingrese todos los campos y asegurese de que la organización sea válida.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                      child: const Text('Aceptar'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      }),
-                                ],
-                              );
-                            });
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Error al registrar'),
+                              content: const Text(
+                                  'Porfavor, ingrese todos los campos y asegurese de que la organización ingresada sea válida.'),
+                              actions: <Widget>[
+                                TextButton(
+                                    child: const Text('Aceptar'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    }),
+                              ],
+                            );
+                          },
+                        );
                       }
                     },
                     child: const Text('Registrarse'),
@@ -143,12 +159,12 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
   }
 
 //metodo registro de usuario, el cual
-  void registerUser(String email, String password, context) async {
+  void registerUser(String email, String password, rol, context) async {
     ProviderState providerState =
         Provider.of<ProviderState>(context, listen: false);
 
     try {
-      if (await providerState.createUserAccount(email, password)) {
+      if (await providerState.createUserAccount(email, password, rol)) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ProviderLogin()));
       }

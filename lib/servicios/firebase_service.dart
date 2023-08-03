@@ -22,7 +22,10 @@ Future<List> getSalas() async {
       "alto_sala": data['alto_sala'],
       "ancho_sala": data['ancho_sala'],
       "largo_sala": data['largo_sala'],
-      "actividades_admitidas": data['actividades_admitidas']
+      "actividades_admitidas": data['actividades_admitidas'],
+      //-----------------------------------
+      // "estado": data['estado'],
+      // "urlImagen": data['urlImagen']
     };
     salas.add(sala);
   }
@@ -40,7 +43,10 @@ Future<void> addSalas(
   int ancho,
   int alto,
   List<String> listaActividades,
-  //List<File?> imagen
+  //--------------------------
+  String estado,
+  //String urlImagen,
+  //--------------------------
 ) async {
   await db.collection('salas').add({
     "nombre": name,
@@ -51,7 +57,9 @@ Future<void> addSalas(
     "ancho_sala": ancho,
     "alto_sala": alto,
     "actividades_admitidas": listaActividades,
-    //"imagenes_sala": imagen
+//------------------------------------------------
+    "estado": estado,
+    //"url_imagen": urlImagen
   });
 }
 
@@ -83,30 +91,3 @@ Future<void> deleteSalas(String uid) async {
 }
 
 //------------------------------------------------------------------
-
-//funciones para los usuarios
-// class Auth {
-//   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-//   User? get CurrentUser => _firebaseAuth.currentUser;
-//   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
-
-//   Future<void> signInWithEmailAndPassword({
-//     required String email,
-//     required String password,
-//   }) async {
-//     await _firebaseAuth.signInWithEmailAndPassword(
-//         email: email, password: password);
-//   }
-
-//   Future<void> createUserWithEmailAndPassword({
-//     required String email,
-//     required String password,
-//   }) async {
-//     await _firebaseAuth.createUserWithEmailAndPassword(
-//         email: email, password: password);
-//   }
-
-//   Future<void> signOut() async {
-//     await _firebaseAuth.signOut();
-//   }
-// }

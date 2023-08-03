@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:reservas_theo/home_screen.dart';
-import 'package:reservas_theo/login_test/ProviderRegistration.dart';
-import 'package:reservas_theo/login_test/ProviderState.dart';
+import 'package:reservas_theo/features/home/home_screen.dart';
+import 'package:reservas_theo/features/registro/registro_screen.dart';
+import 'package:reservas_theo/features/widgets/ui.dart';
+import 'package:reservas_theo/provider/ProviderState.dart';
 
 class ProviderLogin extends StatefulWidget {
   const ProviderLogin({super.key});
@@ -20,13 +21,13 @@ class _ProviderLoginState extends State<ProviderLogin> {
   @override
   Widget build(BuildContext context) {
     //inicializamos la instancia de verificacion en firebase
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    Future<UserCredential?> _signInWithGoogle() async {
+    Future<UserCredential?> signInWithGoogle() async {
       try {
         // Realizar el inicio de sesión con Google
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
         final GoogleSignInAuthentication googleAuth =
             await googleUser!.authentication;
 
@@ -36,11 +37,11 @@ class _ProviderLoginState extends State<ProviderLogin> {
           idToken: googleAuth.idToken,
         );
 
-        await _googleSignIn.signOut();
+        await googleSignIn.signOut();
 
         // Iniciar sesión con las credenciales de Google en Firebase
         final UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
+            await auth.signInWithCredential(credential);
 
         // Retornar las credenciales de usuario
         return userCredential;
@@ -66,22 +67,22 @@ class _ProviderLoginState extends State<ProviderLogin> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextFormField(
               controller: email,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Correo electrónico',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextFormField(
               controller: pass,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Contraseña',
               ),
               obscureText: true,
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
                 if (email.text.isNotEmpty && pass.text.isNotEmpty) {
@@ -109,13 +110,13 @@ class _ProviderLoginState extends State<ProviderLogin> {
               //   Navigator.pushNamed(context,
               //       '/home'); // lo de arriba activa el ingreso con credenciales, con finalidades de prueba se habilita el ingreso directo
               // },
-              child: Text('Iniciar sesión'),
+              child: const Text('Iniciar sesión'),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextButton(
               onPressed: () async {
                 // Iniciar sesión con Google
-                _signInWithGoogle().then((UserCredential? userCredential) {
+                signInWithGoogle().then((UserCredential? userCredential) {
                   if (userCredential != null) {
                     // El inicio de sesión fue exitoso, puedes realizar acciones adicionales aquí
                     print(
@@ -125,8 +126,8 @@ class _ProviderLoginState extends State<ProviderLogin> {
                       'nombre_usuario': nombre_usuario,
                     });
                   } else {
-                    ErrorIngreso();
-                    print('Error en inicio de sesión con Google');
+                    SnackbarHelper.showSnackbar(
+                        context, 'Hubo un problema al iniciar sesión');
                   }
                 });
               },
@@ -155,6 +156,7 @@ class _ProviderLoginState extends State<ProviderLogin> {
 
     try {
       if (await providerState.signInUserAccount(email, password)) {
+        SnackbarHelper.showSnackbar(context, 'Inicio de sesión exitoso');
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -172,7 +174,7 @@ class ErrorIngreso extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SnackBar(
+    return const SnackBar(
       content: Text('Error al ingresar con Google'),
     );
   }

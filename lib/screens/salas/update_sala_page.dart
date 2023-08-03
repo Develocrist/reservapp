@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:reservas_theo/services/firebase_service.dart';
+import 'package:reservas_theo/servicios/firebase_service.dart';
 
-import 'package:reservas_theo/services/upload_image.dart';
+import 'package:reservas_theo/servicios/upload_image.dart';
 
 class UpdateRoomScreen extends StatefulWidget {
   const UpdateRoomScreen({Key? key}) : super(key: key);

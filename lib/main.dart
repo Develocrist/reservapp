@@ -2,23 +2,21 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:reservas_theo/login_test/ProviderLogin.dart';
-import 'package:reservas_theo/login_test/ProviderRegistration.dart';
-import 'package:reservas_theo/login_test/ProviderState.dart';
+import 'package:reservas_theo/features/login/login_screen.dart';
+import 'package:reservas_theo/features/registro/registro_screen.dart';
+import 'package:reservas_theo/provider/ProviderState.dart';
 
-import 'package:reservas_theo/pages/informes/informes_page.dart';
-import 'package:reservas_theo/pages/reports/add_report_screen.dart';
-import 'package:reservas_theo/pages/reports/report_screen.dart';
-import 'package:reservas_theo/pages/reservas/add_reservation2.dart';
+import 'package:reservas_theo/screens/informes/informes_page.dart';
+import 'package:reservas_theo/screens/reports/add_report_screen.dart';
+import 'package:reservas_theo/screens/reports/report_screen.dart';
+import 'package:reservas_theo/screens/reservas/add_reservation2.dart';
 
-import 'package:reservas_theo/pages/reservas/reservas.dart'; //vistas respectivas a reservas
-import 'package:reservas_theo/pages/reservas/see_reservation2.dart';
+import 'package:reservas_theo/screens/reservas/reservas.dart'; //vistas respectivas a reservas
+import 'package:reservas_theo/screens/reservas/see_reservation2.dart';
 
-import 'package:reservas_theo/register_screen.dart';
-import 'package:reservas_theo/firebase_options.dart';
-import 'package:reservas_theo/login_screen.dart';
-import 'package:reservas_theo/home_screen.dart';
-import 'package:reservas_theo/pages/salas/salas.dart'; //vistas respectivas a salas
+import 'package:reservas_theo/servicios/firebase_options.dart';
+import 'package:reservas_theo/features/home/home_screen.dart';
+import 'package:reservas_theo/screens/salas/salas.dart'; //vistas respectivas a salas
 
 void main() async {
   WidgetsFlutterBinding
@@ -27,6 +25,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
     MultiProvider(
+      //inicializar providers
       providers: [
         ChangeNotifierProvider(create: (_) => ProviderState()),
       ],
@@ -45,7 +44,7 @@ class MyApp extends StatelessWidget {
       title: 'TheoApp',
       initialRoute: '/login',
       routes: {
-        '/login2': (context) => LoginScreen(), //ruta a pantalla login (antigua)
+        // '/login2': (context) => LoginScreen(), //ruta a pantalla login (antigua)
         '/login': (context) =>
             ProviderLogin(), //ruta a pantalla login2 <--- en uso actual
         '/home': (context) => const HomeScreen(), //ruta a menu principal
@@ -55,8 +54,6 @@ class MyApp extends StatelessWidget {
             const EditRoomScreen(), //ruta a pantalla modificar sala (solo administrador)
         "/see": (context) =>
             const SeeRoomScreen(), //ruta a pantalla visualizar salas (todos)
-        "/register2": (context) =>
-            const RegisterScreen(), //ruta a pantalla de registro de usuariov(antigua)
         "/register": (context) =>
             const ProviderRegistration(), //ruta a pantalla de registro de usuario
         "/details_room": (context) =>

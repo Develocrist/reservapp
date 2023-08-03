@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reservas_theo/services/firebase_service.dart';
+import 'package:reservas_theo/servicios/firebase_service.dart';
 
 class SeeRoomScreen extends StatefulWidget {
   const SeeRoomScreen({super.key});
