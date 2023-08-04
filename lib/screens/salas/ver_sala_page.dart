@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reservas_theo/features/widgets/ui.dart';
 import 'package:reservas_theo/servicios/firebase_service.dart';
 
 class SeeRoomScreen extends StatefulWidget {
@@ -9,6 +10,9 @@ class SeeRoomScreen extends StatefulWidget {
 }
 
 class _SeeRoomScreenState extends State<SeeRoomScreen> {
+  //recepcion de argumentos, en este caso de administrador,
+  //para autorizar o no a realizar ciertas funciones
+
   List<String> dataList = [];
   List<String> filteredList = [];
 
@@ -41,6 +45,8 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
   //----------------------
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
+    String? rol = arguments['rol'];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Salas'),
@@ -49,9 +55,14 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                onPressed: () async {
-                  await Navigator.pushNamed(context, '/add');
-                  setState(() {});
+                onPressed: () {
+                  if (rol == 'Administrador') {
+                    Navigator.pushNamed(context, '/add');
+                    //setState(() {});
+                  } else {
+                    SnackbarHelper.showSnackbar(context,
+                        'Función disponible solo para usuarios administradores');
+                  }
                 },
                 icon: const Icon(Icons.add_home_outlined),
                 iconSize: 40,
@@ -61,7 +72,7 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                   await Navigator.pushNamed(context, '/reports');
                   setState(() {});
                 },
-                icon: Icon(Icons.report_gmailerrorred),
+                icon: const Icon(Icons.report_gmailerrorred),
                 iconSize: 40,
               )
             ],
@@ -74,7 +85,7 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
           child: TextField(
             onChanged: (value) {
               filterList(value);
-              print(filteredList);
+              //print(filteredList);
             },
             decoration: InputDecoration(
                 labelText: 'Buscar sala', prefixIcon: Icon(Icons.search)),
@@ -91,7 +102,7 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                     return Dismissible(
                       onDismissed: (direction) async {
                         await deleteSalas(snapshot.data?[index]['uid']);
-                        print('sala eliminada');
+                        //print('sala eliminada');
                         snapshot.data?.removeAt(index);
                       },
                       confirmDismiss: (direction) async {
@@ -129,14 +140,10 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                       key: Key(snapshot.data?[index]['uid']),
                       child: ListTile(
                         title: Text(filteredList[index]),
-                        subtitle: const Text('Estado actual: por asignar'),
-                        //    'Ubicación: ${snapshot.data?[index]['ubicacion']}'),
-                        // onTap: (() async {
-                        //   await Navigator.pushNamed(context, '/edit');
-                        //   setState(() {});
-                        // }),
+                        subtitle:
+                            Text('Estado: ${snapshot.data?[index]['estado']}'),
                         onTap: () {
-                          print(snapshot.data?[index]['capacidad']);
+                          //print(snapshot.data?[index]['capacidad']);
                         },
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -147,7 +154,7 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                                 color: Colors.blue,
                               ),
                               onPressed: () async {
-                                print(snapshot.data?[index]['uid']);
+                                //print(snapshot.data?[index]['uid']);
                                 await Navigator.pushNamed(
                                     context, '/details_room', arguments: {
                                   "uid": snapshot.data?[index]['uid'],

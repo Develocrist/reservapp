@@ -166,7 +166,13 @@ class HomeScreen extends StatelessWidget {
                           const Text('Salas:'),
                           ElevatedButton(
                             onPressed: () async {
-                              await Navigator.pushNamed(context, '/see');
+                              await Navigator.pushNamed(
+                                context,
+                                '/see',
+                                arguments: {
+                                  "rol": userRole,
+                                },
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.all(16.0),

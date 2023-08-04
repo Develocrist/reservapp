@@ -340,7 +340,6 @@ class _UpdateRoomScreenState extends State<UpdateRoomScreen> {
                                 setState(() {});
                               },
                             );
-                            print('Nombre de la sala: $roomName');
                           },
                           child: const Text('Actualizar sala'),
                         ),

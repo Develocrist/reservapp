@@ -41,6 +41,8 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
               );
             }
 
+            String urlImagen = room['urlImagen'];
+
             return ListView.builder(
               itemCount: 1,
               itemBuilder: ((context, index) {
@@ -69,10 +71,13 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                             width: 300,
                             height: 200,
                             //color: Colors.red,
-                            child: Image.network(
-                              'https://i.ibb.co/s36ySMD/sala1.jpg',
-                              fit: BoxFit.cover,
-                            ),
+                            child: urlImagen != null && urlImagen.isNotEmpty
+                                ? Image.network(
+                                    urlImagen,
+                                    fit: BoxFit.fill,
+                                  )
+                                : FadeInImage.assetNetwork(
+                                    placeholder: 'assets/carga.gif', image: ''),
                           ),
                           const SizedBox(
                             height: 20,
@@ -87,17 +92,6 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                                   arguments: {
                                     "id_sala": idSala,
                                     "nombre": snapshot.data?[index]['nombre'],
-                                    // "capacidad": snapshot.data?[index]
-                                    //     ['capacidad'],
-                                    // "descripcion": snapshot.data?[index]
-                                    //     ['descripcion'],
-                                    // "ubicacion": snapshot.data?[index]
-                                    //     ['ubicacion'],
-                                    // "alto": snapshot.data?[index]['alto_sala'],
-                                    // "ancho": snapshot.data?[index]
-                                    //     ['ancho_sala'],
-                                    // "largo": snapshot.data?[index]
-                                    //     ['largo_sala'],
                                   });
 
                               setState(() {});

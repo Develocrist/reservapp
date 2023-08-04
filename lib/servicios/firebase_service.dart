@@ -24,8 +24,8 @@ Future<List> getSalas() async {
       "largo_sala": data['largo_sala'],
       "actividades_admitidas": data['actividades_admitidas'],
       //-----------------------------------
-      // "estado": data['estado'],
-      // "urlImagen": data['urlImagen']
+      "estado": data['estado'],
+      "urlImagen": data['url_imagen']
     };
     salas.add(sala);
   }
@@ -45,7 +45,7 @@ Future<void> addSalas(
   List<String> listaActividades,
   //--------------------------
   String estado,
-  //String urlImagen,
+  String urlImagen,
   //--------------------------
 ) async {
   await db.collection('salas').add({
@@ -59,7 +59,7 @@ Future<void> addSalas(
     "actividades_admitidas": listaActividades,
 //------------------------------------------------
     "estado": estado,
-    //"url_imagen": urlImagen
+    "url_imagen": urlImagen
   });
 }
 
@@ -91,3 +91,4 @@ Future<void> deleteSalas(String uid) async {
 }
 
 //------------------------------------------------------------------
+

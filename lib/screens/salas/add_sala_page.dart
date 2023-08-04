@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:reservas_theo/features/widgets/widgets.dart';
 import 'package:reservas_theo/servicios/firebase_service.dart';
 
-import 'package:reservas_theo/servicios/upload_image.dart';
+//import 'package:reservas_theo/servicios/upload_image.dart';
 
 class AddRoomScreen extends StatefulWidget {
   const AddRoomScreen({Key? key}) : super(key: key);
@@ -250,22 +253,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 onPressed: selectImages,
                 child: const Text('Agregar Imagen'),
               ),
-              // ElevatedButton(
-              //   onPressed: () async {
-              //     if (imagesToUpload == null) {
-              //       return;
-              //     }
-              //     final uploaded = await uploadImage(imagesToUpload!);
-              //     if (uploaded) {
-              //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              //           content: Text('Imagen subida correctamente')));
-              //     } else {
-              //       ScaffoldMessenger.of(context).showSnackBar(
-              //           const SnackBar(content: Text('Error al subir imagen')));
-              //     }
-              //   },
-              //   child: const Text('Subir imagen a firebase'),
-              // ),
+
               ElevatedButton(
                 onPressed: () async {
                   // Asignación de los campos en el form a variables con determinado tipo de variable para luego enviarlos a firebase_service.dart
@@ -283,8 +271,10 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
 
                   String estado = 'Disponible';
                   //String urlImagen = 'https://i.ibb.co/s36ySMD/sala1.jpg';
+                  //se espera que esto devuelva un string para incorporarlo abajo en addSalas
 
-                  await uploadImages();
+                  String imageurl = await uploadImages();
+
                   addSalas(
                           roomName,
                           roomCapacity,
@@ -294,7 +284,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           anchoRoom,
                           altoRoom,
                           actividades_admitidas,
-                          estado)
+                          estado,
+                          imageurl)
                       .then(
                     (_) {
                       Navigator.pop(context);
@@ -305,7 +296,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    uploadImages();
+                    //uploadImages();
                   },
                   child: const Text('Subir imagen')),
             ],
@@ -334,19 +325,25 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     }
   }
 
-  Future<void> uploadImages() async {
+  Future<String> uploadImages() async {
+    String imageUrl = '';
     for (final imageFile in imagesToUpload) {
       final uploaded = await uploadImage(imageFile!);
-      if (uploaded) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Imágenes subidas correctamente')),
-        );
+      if (uploaded != null) {
+        SnackbarHelper.showSnackbar(context, 'Sala incorporada con Éxito!');
+        imageUrl = uploaded;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al subir imágenes')),
-        );
+        SnackbarHelper.showSnackbar(context, 'Ha ocurrido un problema');
       }
     }
+    return imageUrl;
+    // final String imageUrl;
+    // if (imagesToUpload.isNotEmpty) {
+    //   imageUrl = (await uploadImage(imagesToUpload.first!)) as String;
+    // } else {
+    //   imageUrl = '';
+    // }
+    // return imageUrl;
   }
 
   void removeImage(int index) {
@@ -354,4 +351,35 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       imagesToUpload.removeAt(index);
     });
   }
+}
+
+//--------------------------
+
+FirebaseFirestore db = FirebaseFirestore.instance;
+final FirebaseStorage storage = FirebaseStorage.instance;
+
+//funcion que sube la imagen y genera la url
+Future<String> uploadImage(File image) async {
+  print(image.path);
+  final String namefile = image.path.split("/").last;
+  Reference ref = storage.ref().child('imagenes').child(namefile);
+  final UploadTask uploadTask = ref.putFile(image);
+  print(uploadTask);
+  final TaskSnapshot snapshot = await uploadTask.whenComplete(() => true);
+  print(snapshot);
+  final String url = await snapshot.ref.getDownloadURL();
+
+  print(url);
+  //return url;
+  // await db.collection('salas').add(({"url_imagen": url}));
+  // if (snapshot.state == TaskState.success) {
+  //   return true;
+  // } else {
+  //   return false;
+  // }
+  // Map<String, dynamic> result = {
+  //   'url': url,
+  //   'success': true,
+  // };
+  return url;
 }
