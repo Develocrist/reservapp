@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:reservas_theo/features/widgets/ui.dart';
 import 'package:reservas_theo/servicios/firebase_service.dart';
 
 import 'package:reservas_theo/servicios/upload_image.dart';
@@ -323,18 +326,23 @@ class _UpdateRoomScreenState extends State<UpdateRoomScreen> {
                                 int.parse(roomAlto.text); //alto de sala
                             List<String> actividades_admitidas =
                                 _selectedOptions;
-                            await updateSalas(
-                              room['uid'],
-                              roomName,
-                              roomCapacity,
-                              roomDescription,
-                              roomLocation,
-                              largoRoom,
-                              anchoRoom,
-                              altoRoom,
-                              actividades_admitidas,
-                              //imagesToUpload
-                            ).then(
+
+                            String estado = 'Disponible';
+
+                            String imageurl = await uploadImages();
+                            updateSalas(
+                                    room['uid'],
+                                    roomName,
+                                    roomCapacity,
+                                    roomDescription,
+                                    roomLocation,
+                                    largoRoom,
+                                    anchoRoom,
+                                    altoRoom,
+                                    actividades_admitidas,
+                                    estado,
+                                    imageurl)
+                                .then(
                               (_) {
                                 Navigator.pop(context);
                                 setState(() {});
@@ -386,19 +394,18 @@ class _UpdateRoomScreenState extends State<UpdateRoomScreen> {
     }
   }
 
-  Future<void> uploadImages() async {
+  Future<String> uploadImages() async {
+    String imageUrl = '';
     for (final imageFile in imagesToUpload) {
-      final uploaded = await uploadImage(imageFile!);
-      if (uploaded) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Imágenes subidas correctamente')),
-        );
+      final uploaded = await uploadImagen(imageFile!);
+      if (uploaded != null) {
+        SnackbarHelper.showSnackbar(context, 'Sala incorporada con Éxito!');
+        imageUrl = uploaded;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al subir imágenes')),
-        );
+        SnackbarHelper.showSnackbar(context, 'Ha ocurrido un problema');
       }
     }
+    return imageUrl;
   }
 
   void removeImage(int index) {
@@ -406,4 +413,34 @@ class _UpdateRoomScreenState extends State<UpdateRoomScreen> {
       imagesToUpload.removeAt(index);
     });
   }
+}
+
+//--------------------------
+
+final FirebaseStorage storage_update = FirebaseStorage.instance;
+
+//funcion que sube la imagen y genera la url
+Future<String> uploadImagen(File image) async {
+  print(image.path);
+  final String namefile = image.path.split("/").last;
+  Reference ref = storage_update.ref().child('imagenes').child(namefile);
+  final UploadTask uploadTask = ref.putFile(image);
+  print(uploadTask);
+  final TaskSnapshot snapshot = await uploadTask.whenComplete(() => true);
+  print(snapshot);
+  final String url = await snapshot.ref.getDownloadURL();
+
+  print(url);
+  //return url;
+  // await db.collection('salas').add(({"url_imagen": url}));
+  // if (snapshot.state == TaskState.success) {
+  //   return true;
+  // } else {
+  //   return false;
+  // }
+  // Map<String, dynamic> result = {-
+  //   'url': url,
+  //   'success': true,
+  // };
+  return url;
 }

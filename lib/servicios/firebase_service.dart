@@ -73,7 +73,9 @@ Future<void> updateSalas(
     int nuevoLargo,
     int nuevoAncho,
     int nuevoAlto,
-    List<String> nuevasActividades) async {
+    List<String> nuevasActividades,
+    String estado,
+    String urlImagen) async {
   await db.collection('salas').doc(uid).set({
     'nombre': nuevoNombre,
     'descripcion': nuevaDescripcion,
@@ -82,7 +84,9 @@ Future<void> updateSalas(
     'largo_sala': nuevoLargo,
     'ancho_sala': nuevoAncho,
     'alto_sala': nuevoAlto,
-    'actividades_admitidas': nuevasActividades
+    'actividades_admitidas': nuevasActividades,
+    'estado': estado,
+    'url_imagen': urlImagen
   });
 }
 

@@ -40,8 +40,8 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                 child: Text('No se encontró la sala.'),
               );
             }
-
-            String urlImagen = room['urlImagen'];
+            //variable que recibe la url de la imagen a cargar
+            String? urlImagen = room['urlImagen'];
 
             return ListView.builder(
               itemCount: 1,

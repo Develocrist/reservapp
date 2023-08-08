@@ -23,3 +23,22 @@ class SnackbarHelper {
     ));
   }
 }
+
+class AlertDialogHelper {
+  static void showAlertDialog(
+      BuildContext context, String titulo, String mensaje) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(titulo),
+            content: Text(mensaje),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'))
+            ],
+          );
+        });
+  }
+}

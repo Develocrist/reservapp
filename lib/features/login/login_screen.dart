@@ -162,6 +162,9 @@ class _ProviderLoginState extends State<ProviderLogin> {
             MaterialPageRoute(
               builder: (context) => const HomeScreen(),
             ));
+      } else {
+        AlertDialogHelper.showAlertDialog(
+            context, 'Error al ingresar', 'Credenciales invalidas');
       }
     } catch (e) {
       print('error al iniciar con provider: $e');

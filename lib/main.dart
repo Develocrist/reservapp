@@ -44,41 +44,33 @@ class MyApp extends StatelessWidget {
       title: 'TheoApp',
       initialRoute: '/login',
       routes: {
-        // '/login2': (context) => LoginScreen(), //ruta a pantalla login (antigua)
-        '/login': (context) =>
-            ProviderLogin(), //ruta a pantalla login2 <--- en uso actual
-        '/home': (context) => const HomeScreen(), //ruta a menu principal
-        "/add": (context) =>
-            const AddRoomScreen(), //ruta a pantalla añadir sala (solo administrador)
-        "/edit": (context) =>
-            const EditRoomScreen(), //ruta a pantalla modificar sala (solo administrador)
-        "/see": (context) =>
-            const SeeRoomScreen(), //ruta a pantalla visualizar salas (todos)
-        "/register": (context) =>
-            const ProviderRegistration(), //ruta a pantalla de registro de usuario
-        "/details_room": (context) =>
-            const DetailsRoomScreen(), //ruta a pantalla ver detalles de sala
-        "/update_room": (context) =>
-            const UpdateRoomScreen(), //ruta a pantalla actualizar datos de sala
-        "/seeReservation": (context) =>
-            SeeReservation(), //ruta a pantalla ver reservas
-        "/addReservation": (context) =>
-            AddReservation(), //ruta a pantalla añadir reserva
+        //login y registro
+        '/login': (context)     =>  const ProviderLogin(), //ruta a pantalla login2 <--- en uso actual        
+        '/register': (context)  =>  const ProviderRegistration(), //ruta a pantalla de registro de usuario
 
-        "/addReservation2": (context) =>
-            ReservationScreen2(), //ruta a pantalla añadir reserva 2
-        "/myReservation": (context) =>
-            const MyReservation(), //ruta a pantalla añadir reserva
-        "/informes": (context) =>
-            const Informes(), //ruta a pantalla de informes (solo administrador)
+        //pantalla principal
+        '/home': (context)      =>  const HomeScreen(), //ruta a menu principal        
 
-        "/createReservation": (context) =>
-            ReservationScreen(), //nueva interfaz para reservas (prueba)
+        //reservas
+        "/addReservation":  (context)   => AddReservation(), //ruta a pantalla añadir reserva
+        "/addReservation2": (context)   => ReservationScreen2(), //ruta a pantalla añadir reserva 2
+        "/myReservation":   (context)   => const MyReservation(), //ruta a pantalla añadir reserva
+        "/seeReservation":  (context)   => SeeReservation(), //ruta a pantalla ver reservas
 
-        "/reports": (context) =>
-            ReportScreen(), //interfaz para visualizar los reportes
-        "/addReport": (context) =>
-            AddReport(), //interfaz para añadir un reporte
+        //salas        
+        "/details_room": (context)  =>   const DetailsRoomScreen(), //ruta a pantalla ver detalles de sala
+        "/update_room": (context)   =>   const  UpdateRoomScreen(), //ruta a pantalla actualizar datos de sala      
+        "/add": (context)           =>   const AddRoomScreen(), //ruta a pantalla añadir sala (solo administrador)
+        "/edit": (context)          =>   const EditRoomScreen(), //ruta a pantalla modificar sala (solo administrador)
+        "/see": (context)           =>   const SeeRoomScreen(), //ruta a pantalla visualizar salas (todos)
+
+        //reportes
+        "/createReservation": (context) =>  ReservationScreen(), //nueva interfaz para reservas (prueba)
+        "/reports":           (context) =>  ReportScreen(), //interfaz para visualizar los reportes
+        "/addReport":         (context) =>  AddReport(), //interfaz para añadir un reporte
+
+        //informes
+        "/informes":          (context) =>  const Informes(), //ruta a pantalla de informes (solo administrador)
       },
     );
   }

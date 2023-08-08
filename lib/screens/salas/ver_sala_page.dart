@@ -154,12 +154,27 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                                 color: Colors.blue,
                               ),
                               onPressed: () async {
-                                //print(snapshot.data?[index]['uid']);
-                                await Navigator.pushNamed(
-                                    context, '/details_room', arguments: {
-                                  "uid": snapshot.data?[index]['uid'],
-                                  "name": snapshot.data?[index]['nombre']
-                                });
+                                //obtiene el elemento en el indice 'index' solo si la lista no es nula
+                                if (snapshot.data != null &&
+                                    snapshot.data!.isNotEmpty) {
+                                  final dataAtIndex = snapshot.data![index];
+                                  if (dataAtIndex != null) {
+                                    await Navigator.pushNamed(
+                                      context,
+                                      '/details_room',
+                                      arguments: {
+                                        "uid": snapshot.data?[index]['uid'],
+                                        "name": snapshot.data?[index]['nombre']
+                                      },
+                                    );
+                                  } else {
+                                    SnackbarHelper.showSnackbar(context,
+                                        'Ha ocurrido un error al enviar la información de la sala');
+                                  }
+                                } else {
+                                  SnackbarHelper.showSnackbar(
+                                      context, 'Ha ocurrido un error');
+                                }
                               },
                             ),
                             IconButton(

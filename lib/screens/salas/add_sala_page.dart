@@ -337,13 +337,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       }
     }
     return imageUrl;
-    // final String imageUrl;
-    // if (imagesToUpload.isNotEmpty) {
-    //   imageUrl = (await uploadImage(imagesToUpload.first!)) as String;
-    // } else {
-    //   imageUrl = '';
-    // }
-    // return imageUrl;
   }
 
   void removeImage(int index) {
@@ -370,16 +363,5 @@ Future<String> uploadImage(File image) async {
   final String url = await snapshot.ref.getDownloadURL();
 
   print(url);
-  //return url;
-  // await db.collection('salas').add(({"url_imagen": url}));
-  // if (snapshot.state == TaskState.success) {
-  //   return true;
-  // } else {
-  //   return false;
-  // }
-  // Map<String, dynamic> result = {
-  //   'url': url,
-  //   'success': true,
-  // };
   return url;
 }

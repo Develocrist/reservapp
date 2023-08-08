@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 final FirebaseStorage storage = FirebaseStorage.instance;
 FirebaseFirestore db = FirebaseFirestore.instance;
 
-Future<bool> uploadImage(File image) async {
+Future<bool> uploadImagen(File image) async {
   print(image.path);
   final String namefile = image.path.split("/").last;
   Reference ref = storage.ref().child('imagenes').child(namefile);
