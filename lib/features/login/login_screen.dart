@@ -48,6 +48,8 @@ class _ProviderLoginState extends State<ProviderLogin> {
       } catch (e) {
         // Manejar cualquier error durante el inicio de sesión
         print('Error en inicio de sesión con Google: $e');
+        SnackbarHelper.showSnackbar(
+            context, 'Hubo un error al iniciar sesión con Google');
         return null;
       }
     }
@@ -87,29 +89,12 @@ class _ProviderLoginState extends State<ProviderLogin> {
               onPressed: () {
                 if (email.text.isNotEmpty && pass.text.isNotEmpty) {
                   _login(email.text, pass.text);
-                } else {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Error al Ingresar'),
-                          content: const Text(
-                              'Rellene los campos y asegurese de que sean credenciales válidas.'),
-                          actions: <Widget>[
-                            TextButton(
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                }),
-                          ],
-                        );
-                      });
+                } else {           
+                  AlertDialogHelper.showAlertDialog(context, 'Error al ingresar',
+                    'Rellene los campos y asegurese de que sean credenciales válidas');       
                 }
-              },
-              // onPressed: () {
-              //   Navigator.pushNamed(context,
-              //       '/home'); // lo de arriba activa el ingreso con credenciales, con finalidades de prueba se habilita el ingreso directo
-              // },
+                
+              },             
               child: const Text('Iniciar sesión'),
             ),
             const SizedBox(height: 16.0),
@@ -131,7 +116,7 @@ class _ProviderLoginState extends State<ProviderLogin> {
                   }
                 });
               },
-              child: Text('Iniciar sesión con Google'),
+              child: const Text('Iniciar sesión con Google'),
             ),
             const SizedBox(height: 16.0),
             TextButton(
@@ -139,7 +124,7 @@ class _ProviderLoginState extends State<ProviderLogin> {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ProviderRegistration()));
+                        builder: (context) => const ProviderRegistration()));
               },
               child: const Text('Crear cuenta'),
             ),
@@ -160,7 +145,7 @@ class _ProviderLoginState extends State<ProviderLogin> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
+              builder: (context) => HomeScreen(),
             ));
       } else {
         AlertDialogHelper.showAlertDialog(

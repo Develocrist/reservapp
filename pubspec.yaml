@@ -26,6 +26,7 @@ dependencies:
   #syncfusion_flutter_calendar: ^21.2.10
   table_calendar: ^3.0.1
   google_sign_in: ^6.1.4
+  screenshot: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reservas_theo/features/widgets/ui.dart';
 
 //----- clase que almacena los metodos para crear los usuarios y su validación
 class ProviderState extends ChangeNotifier {
@@ -39,7 +40,7 @@ class ProviderState extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<bool> createUserAccount(
-      String email, String password, String role) async {
+      String nombre, String email, String password, String role) async {
     //metodo de firebase para crear el usuario, necesito incorporar el rol para despues recuperarlo
     bool success = false;
     try {
@@ -50,6 +51,7 @@ class ProviderState extends ChangeNotifier {
 
       //asignar el rol de usuario al documento en firestore
       await FirebaseFirestore.instance.collection('users').doc(_uid).set({
+        'nombre': nombre,
         'uid': _uid,
         'role': role,
       });
@@ -81,7 +83,7 @@ class ProviderState extends ChangeNotifier {
   }
 
   void signOut() async {
-    await _auth.signOut();
+    await _auth.signOut();    
     (print('salida exitosa'));
   }
 }

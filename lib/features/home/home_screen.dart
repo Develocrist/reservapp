@@ -37,6 +37,28 @@ class HomeScreen extends StatelessWidget {
     return role.toString();
   }
 
+  //String? usuarioName;
+  Future<String?> getUserName(String? uid) async {
+    //metodo para capturar el nombre de usuario
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('uid', isEqualTo: uid)
+          .limit(1)
+          .get();
+      //print(querySnapshot);
+      if (querySnapshot.size > 0) {
+        final userDoc = querySnapshot.docs[0];
+        final nombre = userDoc.get('nombre');
+        return nombre.toString();
+      } else {
+        return 'Nombre no registrado';
+      }
+    } catch (e) {
+      return 'Error al obtener el nombre $e';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ProviderState>(builder: (context, providerState, _) {
@@ -72,6 +94,7 @@ class HomeScreen extends StatelessWidget {
 
       //Future<String?> userRoleFuture = getUserRole(uid!);
 
+      String? userName;
       return Scaffold(
         appBar: AppBar(
           title: const Text('Menú principal'),
@@ -85,6 +108,7 @@ class HomeScreen extends StatelessWidget {
                     '/login',
                     (Route<dynamic> route) => false,
                   );
+                  SnackbarHelper.showSnackbar(context, 'Deslogueo exitoso!');
                 },
                 icon: const Icon(Icons.logout))
           ],
@@ -92,7 +116,7 @@ class HomeScreen extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (welcomeMessage.isNotEmpty)
@@ -107,17 +131,41 @@ class HomeScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                              '$welcomeMessage\nid de usuario: ${user?.uid} \nRol de usuario: $userRole'),
+                          SizedBox(height: 16,),
+                          //Text(nombreUsuario),
+                          Text('$welcomeMessage\n $nombreUsuario'),
+                          Text('Rol de usuario: $userRole'),
+                          FutureBuilder(
+                              future: getUserName(uid),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  final usuarioName = snapshot.data ?? nombreUsuario;
+                                  userName = usuarioName;
+                                  return Text(
+                                      'Nombre de usuario: $usuarioName');
+                                } else if (snapshot.hasError) {
+                                  return const Text(
+                                      'Error al obtener el nombre');
+                                } else {
+                                  final usuarioName = snapshot.data ?? '';
+                                  return Text(
+                                      'Nombre de usuario: $usuarioName');
+                                }
+                              }),
+                          const SizedBox(height: 16,),
                           const Text('Reservas:'),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: () async {
+                                  onPressed: () async {                                                                       
                                     await Navigator.pushNamed(
-                                        context, '/myReservation');
+                                        context, '/myReservation', arguments: {
+                                          "uid": user?.uid,
+                                          "nombre": userName,                                          
+                                        });
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(16.0),
@@ -134,10 +182,12 @@ class HomeScreen extends StatelessWidget {
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () async {
+                                    // userName nombre de la variable con el nombre del usuario en ella, se debe enviar a la reserva
                                     await Navigator.pushNamed(
                                         context, '/addReservation2',
                                         arguments: {
                                           "uid": user?.uid,
+                                          "nombre": userName
                                         });
                                   },
                                   style: ElevatedButton.styleFrom(

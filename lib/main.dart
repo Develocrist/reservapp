@@ -49,13 +49,13 @@ class MyApp extends StatelessWidget {
         '/register': (context)  =>  const ProviderRegistration(), //ruta a pantalla de registro de usuario
 
         //pantalla principal
-        '/home': (context)      =>  const HomeScreen(), //ruta a menu principal        
+        '/home': (context)      =>   HomeScreen(), //ruta a menu principal        
 
         //reservas
-        "/addReservation":  (context)   => AddReservation(), //ruta a pantalla añadir reserva
+        
         "/addReservation2": (context)   => ReservationScreen2(), //ruta a pantalla añadir reserva 2
         "/myReservation":   (context)   => const MyReservation(), //ruta a pantalla añadir reserva
-        "/seeReservation":  (context)   => SeeReservation(), //ruta a pantalla ver reservas
+        "/editMyReservation" :(context) => EditReservation(), //ruta a pantalla para editar la reserva y añadir asistentes
 
         //salas        
         "/details_room": (context)  =>   const DetailsRoomScreen(), //ruta a pantalla ver detalles de sala

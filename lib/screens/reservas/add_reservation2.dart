@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reservas_theo/features/widgets/ui.dart';
 import 'package:intl/intl.dart';
+import 'package:reservas_theo/screens/reservas/horas_reservas.dart';
 
 class ReservationScreen2 extends StatefulWidget {
   @override
@@ -15,7 +16,9 @@ class Reservation {
   final DateTime horaFin;
   final String location;
   final String user;
-  final DateTime fechaReserva;
+  final String idUsuario;
+  final DateTime? fechaReserva;
+  final List<String> asistentes = [];
 
   Reservation({
     required this.name,
@@ -25,17 +28,21 @@ class Reservation {
     required this.location,
     required this.user,
     required this.fechaReserva,
+    required this.idUsuario,
+    required List<String> asistentes,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
-      'description': description,
-      'dateTime': horaInicio,
-      'dateTime2': horaFin,
-      'location': location,
-      'user': user,
-      'fecha': fechaReserva,
+      'Asunto': name,
+      'Descripción': description,
+      'Hora_inicio': horaInicio,
+      'Hora_finalización': horaFin,
+      'Lugar': location,
+      'Usuario': user,
+      'Fecha': fechaReserva,
+      'uid': idUsuario,
+      'Asistentes': asistentes,
     };
   }
 }
@@ -43,47 +50,92 @@ class Reservation {
 class _ReservationScreen2State extends State<ReservationScreen2> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _horaInicioController = TextEditingController();
-  final TextEditingController _horaFinController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _userController = TextEditingController(text: '');
-  final TextEditingController _fechaReservaController = TextEditingController();
+  final TextEditingController _userNameController =
+      TextEditingController(text: '');
+
+  //final TextEditingController _fechaReservaController = TextEditingController();
 
 //metodo para crear la reserva
   Future<void> createReservation() async {
     try {
-      final name = _nameController.text;
-      final description = _descriptionController.text;
-      final horaInicio = DateTime.parse(_horaInicioController.text);
-      final horaFin = DateTime.parse(_horaFinController.text);
+      final asunto = _nameController.text;
+      final descripcion = _descriptionController.text;
+      final horaInicio = tiempoInicio;
+      final horaFin = tiempoFin;
       final location = _locationController.text;
-      final user = _userController.text;
-      final fechaReserva = DateTime.parse(_fechaReservaController.text);
+      final user = _userNameController.text;
+      final fechaReserva = fechaSeleccionada;
+      final idUsuario = _userController.text;
 
-      final reservation = Reservation(
-        name: name,
-        description: description,
-        horaInicio: horaInicio,
-        horaFin: horaFin,
-        location: location,
-        user: user,
-        fechaReserva: fechaReserva,
+      DateTime now = DateTime.now();
+      DateTime dateTimeInicio = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        horaInicio!.hour,
+        horaInicio.minute,
       );
 
-      await FirebaseFirestore.instance
+      DateTime now2 = DateTime.now();
+      DateTime dateTimeFin = DateTime(
+        now2.year,
+        now2.month,
+        now2.day,
+        horaFin!.hour,
+        horaFin.minute,
+      );
+
+      final List<String> asistentes = [];
+
+      final reservation = Reservation(
+          name: asunto,
+          description: descripcion,
+          horaInicio: dateTimeInicio,
+          horaFin: dateTimeFin,
+          location: location,
+          user: user,
+          fechaReserva: fechaReserva,
+          idUsuario: idUsuario, // Agregar la ID del usuario
+          asistentes: asistentes);
+
+      QuerySnapshot revisarReserva = await FirebaseFirestore.instance
           .collection('reservations')
-          .add(reservation.toMap());
+          .where('Lugar', isEqualTo: location)
+          .where('Hora_inicio', isEqualTo: dateTimeInicio)
+          .where('Hora_finalización', isEqualTo: dateTimeFin)
+          .get();
 
-      _nameController.clear();
-      _descriptionController.clear();
-      _horaInicioController.clear();
-      _horaFinController.clear();
-      _locationController.clear();
-      _userController.clear();
-      _fechaReservaController.clear();
+      if (revisarReserva.docs.isNotEmpty) {
+        SnackbarHelper.showSnackbar(
+            context, 'Ya existe una reserva para ese horario en esa sala');
+      } else {
+        final DocumentReference reservationRef = await FirebaseFirestore
+            .instance
+            .collection('reservations')
+            .add(reservation.toMap());
 
-      SnackbarHelper.showSnackbar(context, 'Reserva creada con éxito');
+        final String reservaId = reservationRef.id;
+
+        // Actualiza la reserva con la ID del documento y la ID del usuario
+        await FirebaseFirestore.instance
+            .collection('reservations')
+            .doc(reservaId)
+            .update({
+          'uid': reservaId,
+          'id_usuario': idUsuario,
+        });
+
+        _nameController.clear();
+        _descriptionController.clear();
+        _locationController.clear();
+        _userController.clear();
+
+        SnackbarHelper.showSnackbar(context, 'Reserva creada con éxito');
+      }
     } catch (e) {
+      print(e);
       SnackbarHelper.showSnackbar(context, 'Error al crear la reserva');
     }
   }
@@ -166,16 +218,23 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
   String?
       selectedSala; //variable donde se almacenara la sala importada desde firebase
 
+  String? actividadesSala =
+      ""; //variable para almacenar las actividades que admite determinada sala
+  int? personasAdmitidas;
+
+  Horas? selectedHoras; //variable para los bloques de horas
+
+  bool mostrarDetalles = false; //visibilidad de los detalles de la sala
   @override
   Widget build(BuildContext context) {
-    bool datosValidos = false;
     //capturamos el uid del usuario actual y lo insertamos en el textformfield
     final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
     _userController.text = arguments['uid'];
+    _userNameController.text = arguments['nombre'] ?? arguments['nombreGoogle'];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crear Reserva'),
+        title: const Text('Crear Reserva'),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
@@ -183,22 +242,22 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
           children: [
             TextField(
               readOnly: true,
-              controller: _userController,
+              controller:
+                  _userNameController, //controlador que tiene el nombre de usuario
               decoration: const InputDecoration(labelText: 'Usuario'),
             ),
             TextField(
+              maxLength: 20,
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Asunto reserva:'),
+              decoration: const InputDecoration(
+                labelText: 'Asunto reserva:',
+              ),
             ),
             TextField(
               controller: _descriptionController,
               decoration: const InputDecoration(labelText: 'Detalles:'),
             ),
-            // TextField(
-            //   controller: _fechaReservaController,
-            //   decoration: const InputDecoration(
-            //       labelText: 'Fecha de reunión (yyyy-MM-dd)'),
-            // ),
+            const SizedBox(height: 16),
             Text(fechaSeleccionada != null
                 ? 'Fecha seleccionada: ${DateFormat('dd/MM/yyyy').format(fechaSeleccionada!)}'
                 : 'Seleccione una fecha: '),
@@ -206,55 +265,19 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
               onPressed: () => _fechaSeleccionada(context),
               child: const Text('Seleccionar Fecha'),
             ),
-            Text(
-              tiempoInicio != null
-                  ? 'Hora de inicio seleccionada: ${tiempoInicio!.format(context)}'
-                  : 'Hora de inicio no seleccionada',
-            ),
-            ElevatedButton(
-              onPressed: () => _horaInicioSeleccionado(context),
-              child: const Text('Seleccionar Hora de inicio'),
-            ),
-            Text(
-              tiempoFin != null
-                  ? 'Hora de fin seleccionado: ${tiempoFin!.format(context)}'
-                  : 'Hora de inicio no seleccionada',
-            ),
-            ElevatedButton(
-              onPressed: () => _horaFinSeleccionado(context),
-              child: const Text('Seleccionar hora de finalización'),
-            ),
-            if (tiempoInicio != null &&
-                tiempoFin != null &&
-                rangoValido(tiempoInicio, tiempoFin))
-              const Text(
-                'El rango de horas seleccionado no es valido!',
-                style: TextStyle(color: Colors.red),
-              ),
-
-            // TextField(
-            //   controller: _horaInicioController,
-            //   decoration: const InputDecoration(
-            //       labelText: 'Hora de inicio (yyyy-MM-dd HH:mm)'),
-            // ),
-            // TextField(
-            //   controller: _horaFinController,
-            //   decoration: const InputDecoration(
-            //       labelText: 'Hora de termino (yyyy-MM-dd HH:mm)'),
-            // ),
-            // TextField(
-            //   controller: _locationController,
-            //   decoration: const InputDecoration(labelText: 'Sala:'),
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Sala:     '),
+                const Text('Seleccionar Sala:      '),
                 DropdownButton<String>(
                   value: selectedSala,
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedSala = newValue;
+                      _locationController.text = selectedSala!;
+                      //se llama la funcion para cargar las actividades segun la sala
+                      cargarActividades(selectedSala);
+                      mostrarDetalles = true;
                     });
                   },
                   items: nombresSalas.map((String sala) {
@@ -266,17 +289,79 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
                 ),
               ],
             ),
-
+            Visibility(
+              visible: mostrarDetalles,
+              child: Text(
+                "Esta sala es apta para las siguientes actividades: $actividadesSala y permite un máximo de $personasAdmitidas asistentes.",
+                style: TextStyle(
+                    fontStyle: FontStyle.italic, color: Colors.blue[800]),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Seleccionar Bloque: '),
+                DropdownButton<Horas>(
+                  value:
+                      selectedHoras, // La hora seleccionada en el DropdownButton
+                  onChanged: (Horas? newValue) {
+                    setState(() {
+                      tiempoInicio = newValue?.startTime;
+                      tiempoFin = newValue?.endTime;
+                      selectedHoras = newValue;
+                    });
+                  },
+                  items: Horas.horasPredefinidas
+                      .map<DropdownMenuItem<Horas>>((Horas horas) {
+                    return DropdownMenuItem<Horas>(
+                      value: horas,
+                      child: Text(
+                        '${horas.startTime.format(context)} - ${horas.endTime.format(context)}',
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                if (datosValidos = true) {
-                  createReservation();
-                } else {
+                if (_nameController.text.isEmpty ||
+                    _descriptionController.text.isEmpty ||
+                    tiempoInicio == null ||
+                    tiempoFin == null ||
+                    selectedSala == null ||
+                    fechaSeleccionada == null) {
                   AlertDialogHelper.showAlertDialog(
                       context,
                       "Error al reservar",
-                      "Asegurese de ingresar correctamente los campos");
+                      "Asegurese de rellenar correctamente todos los campos");
+                } else {
+                  showDialog(
+                      context: context,
+                      builder: ((BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Confirmar Reserva"),
+                          content: const Text(
+                              '¿Estas seguro que desea crear esta reserva?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  createReservation();
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Confirmar')),
+                          ],
+                        );
+                      }));
                 }
               },
               child: const Text('Crear Reserva'),
@@ -285,5 +370,39 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
         ),
       ),
     );
+  }
+
+  Future<void> cargarActividades(String? selectedSala) async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('salas')
+          .where('nombre', isEqualTo: selectedSala)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final sala = snapshot.docs.first;
+        final actividades = sala['actividades_admitidas'] as List<dynamic>;
+        final cantidadPersonas = sala['capacidad'] as int;
+        //ahora se convierte en cadena de texto
+        final actividadesTexto = actividades.map((dynamic actividad) {
+          return actividad.toString();
+        }).join(', ');
+        setState(() {
+          actividadesSala = actividadesTexto;
+          personasAdmitidas = cantidadPersonas;
+        });
+      } else {
+        setState(() {
+          actividadesSala = "Selecciona una sala";
+          personasAdmitidas = 0;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        actividadesSala = "Error al cargar los detalles de las actividades $e";
+        personasAdmitidas = 0;
+      });
+      print('Hubo un error: $e');
+    }
   }
 }

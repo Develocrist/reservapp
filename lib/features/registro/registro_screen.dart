@@ -14,6 +14,8 @@ class ProviderRegistration extends StatefulWidget {
 
 class _ProviderRegistrationState extends State<ProviderRegistration> {
   //variables para el registro
+
+  final TextEditingController nombre = TextEditingController();
   final TextEditingController correo = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController organizacion = TextEditingController();
@@ -51,7 +53,15 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                   //     return null;
                   //   },
                   // ),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre de usuario', 
+                    ),
+                    controller: nombre,
+                    maxLength: 10,
+                  ),
+                  
                   TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Correo electrónico',
@@ -98,21 +108,21 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                       final String organizacionText = organizacion.text;
 
                       //registro de usuario con rol de usuario
-                      if (correo.text.isNotEmpty &&
+                      if (nombre.text.isNotEmpty && correo.text.isNotEmpty &&
                           password.text.isNotEmpty &&
                           organizacionText.toLowerCase().contains('umd')) {
                         String rol = 'Usuario común';
-                        registerUser(correo.text, password.text, rol, context);
+                        registerUser(nombre.text ,correo.text, password.text, rol, context);
                         SnackbarHelper.showSnackbar(
                             context, 'Registro de Usuario exitoso');
                       } //registro de usuario con rol de administrador
-                      else if (correo.text.isNotEmpty &&
+                      else if (nombre.text.isNotEmpty && correo.text.isNotEmpty &&
                           password.text.isNotEmpty &&
                           organizacionText
                               .toLowerCase()
                               .contains('admi_theoapp')) {
                         String rol = 'Administrador';
-                        registerUser(correo.text, password.text, rol, context);
+                        registerUser(nombre.text, correo.text, password.text, rol, context);
                         SnackbarHelper.showSnackbar(
                             context, 'Registro de Administrador exitoso');
                       } else {
@@ -159,12 +169,12 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
   }
 
 //metodo registro de usuario, el cual
-  void registerUser(String email, String password, rol, context) async {
+  void registerUser(String nombre, String email, String password, rol, context) async {
     ProviderState providerState =
         Provider.of<ProviderState>(context, listen: false);
 
     try {
-      if (await providerState.createUserAccount(email, password, rol)) {
+      if (await providerState.createUserAccount(nombre, email, password, rol)) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ProviderLogin()));
       }
