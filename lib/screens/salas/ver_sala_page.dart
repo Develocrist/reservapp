@@ -47,6 +47,7 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
     String? rol = arguments['rol'];
+    String? username = arguments['nombre'];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Salas'),
@@ -103,9 +104,16 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                       onDismissed: (direction) async {
                         await deleteSalas(snapshot.data?[index]['uid']);
                         //print('sala eliminada');
-                        snapshot.data?.removeAt(index);
+                        setState(() {
+                          filteredList.removeAt(index);
+                        });
                       },
                       confirmDismiss: (direction) async {
+                        if (rol != 'Administrador') {
+                          SnackbarHelper.showSnackbar(context,
+                              'No tienes los permisos para realizar esta acción');
+                          return false;
+                        }
                         bool result = false;
                         result = await showDialog(
                             context: context,
@@ -182,7 +190,8 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                                   await Navigator.pushNamed(
                                       context, '/addReport', arguments: {
                                     "uid": snapshot.data?[index]['uid'],
-                                    "name": snapshot.data?[index]['nombre']
+                                    "name": snapshot.data?[index]['nombre'],
+                                    'nombreusuario': username
                                   });
                                 },
                                 icon: const Icon(

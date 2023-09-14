@@ -221,6 +221,7 @@ class HomeScreen extends StatelessWidget {
                                 '/see',
                                 arguments: {
                                   "rol": userRole,
+                                  "nombre": userName
                                 },
                               );
                             },

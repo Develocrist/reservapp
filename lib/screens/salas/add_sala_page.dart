@@ -179,13 +179,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           contentPadding:
                               const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 0.5),
                           title: const Text('Asesorías'),
-                          value: _selectedOptions.contains('Asesoría'),
+                          value: _selectedOptions.contains('Asesorías'),
                           onChanged: (value) {
                             setState(() {
                               if (value!) {
-                                _selectedOptions.add('Asesoría');
+                                _selectedOptions.add('Asesorías');
                               } else {
-                                _selectedOptions.remove('Asesoría');
+                                _selectedOptions.remove('Asesorías');
                               }
                             });
                           },
@@ -270,8 +270,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   List<String> actividades_admitidas = _selectedOptions;
 
                   String estado = 'Disponible';
-                  //String urlImagen = 'https://i.ibb.co/s36ySMD/sala1.jpg';
-                  //se espera que esto devuelva un string para incorporarlo abajo en addSalas
+                  
 
                   String imageurl = await uploadImages();
 
@@ -294,11 +293,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 },
                 child: const Text('Añadir sala a firebase'),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    //uploadImages();
-                  },
-                  child: const Text('Subir imagen')),
+              
             ],
           ),
         ),
@@ -329,6 +324,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     String imageUrl = '';
     for (final imageFile in imagesToUpload) {
       final uploaded = await uploadImage(imageFile!);
+      // ignore: unnecessary_null_comparison
       if (uploaded != null) {
         SnackbarHelper.showSnackbar(context, 'Sala incorporada con Éxito!');
         imageUrl = uploaded;

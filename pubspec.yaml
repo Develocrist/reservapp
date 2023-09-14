@@ -27,6 +27,11 @@ dependencies:
   table_calendar: ^3.0.1
   google_sign_in: ^6.1.4
   screenshot: ^2.1.0
+  image_gallery_saver: ^2.0.3
+  pdf: ^3.10.4
+  permission_handler: ^11.0.0
+  path_provider: ^2.1.1
+  file_picker: ^5.5.0
 
 dev_dependencies:
   flutter_test:

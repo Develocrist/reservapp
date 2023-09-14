@@ -29,7 +29,7 @@ class Reservation {
     required this.user,
     required this.fechaReserva,
     required this.idUsuario,
-    required List<String> asistentes,
+    required List<String> asistentes, required Timestamp fechaCreacion,
   });
 
   Map<String, dynamic> toMap() {
@@ -89,6 +89,8 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
 
       final List<String> asistentes = [];
 
+      Timestamp now3 = Timestamp.now(); //obtener fecha y hora actual para el registro
+
       final reservation = Reservation(
           name: asunto,
           description: descripcion,
@@ -98,7 +100,9 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
           user: user,
           fechaReserva: fechaReserva,
           idUsuario: idUsuario, // Agregar la ID del usuario
-          asistentes: asistentes);
+          asistentes: asistentes,
+          fechaCreacion : now3, //agregar fecha y hora de creación
+          );
 
       QuerySnapshot revisarReserva = await FirebaseFirestore.instance
           .collection('reservations')
@@ -125,6 +129,7 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
             .update({
           'uid': reservaId,
           'id_usuario': idUsuario,
+          'fechaCreacion' : now3
         });
 
         _nameController.clear();
@@ -237,7 +242,7 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
         title: const Text('Crear Reserva'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TextField(

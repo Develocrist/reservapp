@@ -1,14 +1,12 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:reservas_theo/features/widgets/ui.dart';
 import 'package:reservas_theo/servicios/firebase_service.dart';
-
-import 'package:reservas_theo/servicios/upload_image.dart';
 
 class UpdateRoomScreen extends StatefulWidget {
   const UpdateRoomScreen({Key? key}) : super(key: key);
@@ -431,16 +429,6 @@ Future<String> uploadImagen(File image) async {
   final String url = await snapshot.ref.getDownloadURL();
 
   print(url);
-  //return url;
-  // await db.collection('salas').add(({"url_imagen": url}));
-  // if (snapshot.state == TaskState.success) {
-  //   return true;
-  // } else {
-  //   return false;
-  // }
-  // Map<String, dynamic> result = {-
-  //   'url': url,
-  //   'success': true,
-  // };
+  
   return url;
 }

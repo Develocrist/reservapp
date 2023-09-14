@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
+import 'package:reservas_theo/features/widgets/ui.dart';
+import 'package:screenshot/screenshot.dart';
 
 class ReservationScreen extends StatefulWidget {
   @override
@@ -10,6 +15,8 @@ class ReservationScreen extends StatefulWidget {
 class _ReservationScreenState extends State<ReservationScreen> {
   List<Reservation> _reservations = []; //lista completa de reservas
   List<Reservation> _filteredReservations = []; //lista filtrada de reservas
+  ScreenshotController screenshotController =
+      ScreenshotController(); //controlador que se encarga de la captura de pantalla
 
   bool _fechaFiltradaActiva = false;
   DateTime? _fechaSeleccionada; //variable para la fecha seleccionada
@@ -19,6 +26,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
     super.initState();
     loadReservations();
   }
+
   //metodo para cargar todas las reservas
   Future<void> loadReservations() async {
     try {
@@ -28,15 +36,17 @@ class _ReservationScreenState extends State<ReservationScreen> {
       snapshot.docs.forEach((doc) {
         // Parsear los datos de Firestore y crear objetos Reservation
         Reservation reservation = Reservation.fromFirestore(doc);
-        reservations.add(reservation);        
+        reservations.add(reservation);
       });
 
-      reservations.sort((a, b) => b.fecha.compareTo(a.fecha),
+      reservations.sort(
+        (a, b) => b.fechaCreacion.compareTo(a.fechaCreacion),
       );
 
       setState(() {
         _reservations = reservations;
-        _filteredReservations = _reservations; //al inicio ambas listas son iguales
+        _filteredReservations =
+            _reservations; //al inicio ambas listas son iguales
       });
     } catch (e) {
       print('Error al cargar las reservas desde Firebase: $e');
@@ -47,7 +57,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
 
   Future<void> cargarReservas() async {
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('reservations').get();
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('reservations').get();
       List<Reservation> reservations = [];
       snapshot.docs.forEach((doc) {
         Reservation reservation = Reservation.fromFirestore(doc);
@@ -92,12 +103,13 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     'Fecha: ${dateFormat.format(reservation.fecha)}'), //nombre de la reserva y la fecha cuando se va a realizar
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [                    
+                  children: [
                     Text('Asunto: ${reservation.asunto}'),
                     //Text('Descripción:\n ${reservation.descripcion}'), //descripción de la reserva
                     Text(
                         'Horario: ${timeFormat.format(reservation.horaInicio)} - ${timeFormat.format(reservation.horaFin)}'), // Muestra la fecha y hora de la reserva
-                    Text('Sala: ${reservation.ubicacion}'), // Muestra la ubicación de la reserva
+                    Text(
+                        'Sala: ${reservation.ubicacion}'), // Muestra la ubicación de la reserva
                     Text(
                         'Usuario que reservo: ${reservation.usuario}'), //mostrar al usuario que hizo la reserva
 
@@ -109,37 +121,53 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     onPressed: () {
                       showDialog<String>(
                         context: context,
-                        builder: (BuildContext context) => Dialog(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'Detalles de actividad:',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                //informacion asociada a la reserva
-                                
-                                Text('Asunto: ${reservation.asunto}'),//asunto
-                                Text('Descripción: ${reservation.descripcion}'), //descripción
-                                Text('Fecha: ${dateFormat.format(reservation.fecha)}'),
-                                Text('Ubicación: ${reservation.ubicacion}'),
-                                Text('Horario: ${timeFormat.format(reservation.horaInicio)} - ${timeFormat.format(reservation.horaFin)}'),
-                                Text('Asistentes: ${reservation.asistentes.join(", ")}'),
-                                Text('ID: ${reservation.idReserva}'),
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Compartir')),
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Cerrar'))
-                              ],
+                        builder: (BuildContext context) => Screenshot(
+                          controller: screenshotController,
+                          child: Dialog(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Detalles de actividad:',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  //informacion asociada a la reserva
+
+                                  Text(
+                                      'Asunto: ${reservation.asunto}'), //asunto
+                                  Text(
+                                      'Descripción: ${reservation.descripcion}'), //descripción
+                                  Text(
+                                      'Fecha: ${dateFormat.format(reservation.fecha)}'),
+                                  Text('Ubicación: ${reservation.ubicacion}'),
+                                  Text(
+                                      'Horario: ${timeFormat.format(reservation.horaInicio)} - ${timeFormat.format(reservation.horaFin)}'),
+                                  Text(
+                                      'Asistentes: ${reservation.asistentes.join(", ")}'),
+                                  Text('ID: ${reservation.idReserva}'),
+                                  TextButton(
+                                      onPressed: () async {
+                                        final Uint8List? image =
+                                            await screenshotController
+                                                .capture();
+                                        if (image != null) {
+                                          await ImageGallerySaver.saveImage(
+                                              image);
+                                          SnackbarHelper.showSnackbar(context,
+                                              'Detalles de actividad guardada en Galería con Éxito');
+                                        }
+                                      },
+                                      child: const Text('Guardar actividad')),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Cerrar'))
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -198,7 +226,6 @@ class _ReservationScreenState extends State<ReservationScreen> {
                     _fechaFiltradaActiva = false;
                     _fechaSeleccionada = null;
                     _filteredReservations = _reservations;
-                    
                   });
                 },
                 icon: const Icon(
@@ -228,6 +255,7 @@ class Reservation {
   final String? usuario;
   final String? idReserva;
   final List<String> asistentes;
+  final DateTime fechaCreacion; //nuevo campo para la fecha de creacion
 
   Reservation(
       {required this.asunto,
@@ -238,7 +266,8 @@ class Reservation {
       required this.horaFin,
       required this.fecha,
       required this.idReserva,
-      required this.asistentes});
+      required this.asistentes,
+      required this.fechaCreacion});
 
   factory Reservation.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
@@ -262,6 +291,10 @@ class Reservation {
           : DateTime.now(),
       idReserva: data['uid'] ?? '',
       asistentes: asistentes, //asignar la lista de asistentes
+      fechaCreacion: data['fechaCreacion'] != null //obtener fecha de creación
+      ? (data['fechaCreacion'] as Timestamp).toDate()
+      : DateTime.now(), //valor por defecto si no hay cfecha de creación
+      
     );
   }
 }

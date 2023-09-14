@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
+
 
 //----- clase que almacena los metodos para crear los usuarios y su validación
 class ProviderState extends ChangeNotifier {
