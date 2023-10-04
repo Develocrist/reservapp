@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
-import 'package:reservas_theo/provider/ProviderState.dart';
+import 'package:VisalApp/provider/ProviderState.dart';
 import 'dart:async';
-import 'package:reservas_theo/features/widgets/widgets.dart';
+import 'package:VisalApp/features/widgets/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -24,9 +24,8 @@ class HomeScreen extends StatelessWidget {
         final userDoc = querySnapshot.docs[0];
         role = userDoc.get('role');
         //print('Role: $role');
-
       } else {
-        role = 'Rol no definido';
+        role = 'Usuario Normal';
       }
     } catch (e) {
       //print('Error al obtener el rol del usuario: $e');
@@ -52,7 +51,7 @@ class HomeScreen extends StatelessWidget {
         final nombre = userDoc.get('nombre');
         return nombre.toString();
       } else {
-        return 'Nombre no registrado';
+        return 'Por definir';
       }
     } catch (e) {
       return 'Error al obtener el nombre $e';
@@ -63,12 +62,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ProviderState>(builder: (context, providerState, _) {
       //-------------------------------------- mensaje de bienvenida
-
       final Map<String, dynamic>? arguments =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
       final String nombreUsuario = arguments?['nombre_usuario'] ??
-          ''; //se recibe el argumento nombre_usuario enviado desde providerlogin
+          'UserVisalApp'; //se recibe el argumento nombre_usuario enviado desde providerlogin
 
       String welcomeMessage = ''; // mensaje de bienvenida
 
@@ -79,10 +77,7 @@ class HomeScreen extends StatelessWidget {
       if (user != null) {
         final email = user.email;
         providerState.updateEmail(email);
-        //providerState.setUid(uid); //actualiza el valor de uid en providerState
-        //final userId = user.uid; //obtener la id del usuario actual
       }
-
       if (providerState.getEmail != null &&
           providerState.getEmail!.isNotEmpty) {
         welcomeMessage = 'Bienvenido: ${providerState.getEmail!}';
@@ -91,14 +86,17 @@ class HomeScreen extends StatelessWidget {
       }
 
       //---------------------------------------------------------------------------------- rol de usuario
+      //print('valor username con provider: $nombreUsuario');
+      String? userName = nombreUsuario; //asignacion de google a username
+      //print('valor username con google: $userName');
 
-      //Future<String?> userRoleFuture = getUserRole(uid!);
-
-      String? userName;
       return Scaffold(
         appBar: AppBar(
           title: const Text('Menú principal'),
           actions: <Widget>[
+            const Center(
+              child: Text('Salir'),
+            ),
             IconButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut(); //deslogeo con google
@@ -110,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                   );
                   SnackbarHelper.showSnackbar(context, 'Deslogueo exitoso!');
                 },
-                icon: const Icon(Icons.logout))
+                icon: const Icon(Icons.logout)),
           ],
         ),
         body: Padding(
@@ -125,46 +123,67 @@ class HomeScreen extends StatelessWidget {
                   builder: (context, snapshot) {
                     final userRole = snapshot.data;
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      //print(uid);
-                      //final userRole = snapshot.data;
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          SizedBox(height: 16,),
+                          const SizedBox(
+                            height: 16,
+                          ),
                           //Text(nombreUsuario),
-                          Text('$welcomeMessage\n $nombreUsuario'),
+                          Text('$welcomeMessage\n$nombreUsuario'),
                           Text('Rol de usuario: $userRole'),
                           FutureBuilder(
                               future: getUserName(uid),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  final usuarioName = snapshot.data ?? nombreUsuario;
-                                  userName = usuarioName;
-                                  return Text(
-                                      'Nombre de usuario: $usuarioName');
+                                  String? usuarioName =
+                                      snapshot.data ?? nombreUsuario;
+                                  //print('valor usuarioName $usuarioName');
+                                  if (usuarioName == 'Por definir') {
+                                    //print('usuarioName1: $usuarioName');
+                                    usuarioName = userName;
+                                    //print('usuarioName: $usuarioName');
+                                    return Text(
+                                        'Nombre de usuarioooo: $usuarioName');
+                                  } else {
+                                    //aqui se muestra el nombre de usuario con provider
+                                    //print('creo q siempre entra aca $usuarioName');
+                                    userName = usuarioName;
+                                    return Text(
+                                        'Nombre de usuario: $usuarioName');
+                                  }
+
+                                  //userName = usuarioName; //aqui se reemplaza
+                                  //aqui cambia porque fue reemplazado
                                 } else if (snapshot.hasError) {
                                   return const Text(
                                       'Error al obtener el nombre');
                                 } else {
-                                  final usuarioName = snapshot.data ?? '';
+                                  String usuarioNameProvider =
+                                      snapshot.data ?? '';
+                                  print(
+                                      'nombre usuario provider: $usuarioNameProvider');
                                   return Text(
-                                      'Nombre de usuario: $usuarioName');
+                                      'Nombre de usuario: $usuarioNameProvider');
                                 }
                               }),
-                          const SizedBox(height: 16,),
+                          const SizedBox(
+                            height: 16,
+                          ),
                           const Text('Reservas:'),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: () async {                                                                       
+                                  onPressed: () async {
                                     await Navigator.pushNamed(
-                                        context, '/myReservation', arguments: {
+                                        context, '/myReservation',
+                                        arguments: {
                                           "uid": user?.uid,
-                                          "nombre": userName,                                          
+                                          "nombre": userName,
                                         });
                                   },
                                   style: ElevatedButton.styleFrom(

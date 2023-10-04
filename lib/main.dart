@@ -2,21 +2,21 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:reservas_theo/features/login/login_screen.dart';
-import 'package:reservas_theo/features/registro/registro_screen.dart';
-import 'package:reservas_theo/provider/ProviderState.dart';
+import 'package:VisalApp/features/login/login_screen.dart';
+import 'package:VisalApp/features/registro/registro_screen.dart';
+import 'package:VisalApp/provider/ProviderState.dart';
 
-import 'package:reservas_theo/screens/informes/informes_page.dart';
-import 'package:reservas_theo/screens/reports/add_report_screen.dart';
-import 'package:reservas_theo/screens/reports/report_screen.dart';
-import 'package:reservas_theo/screens/reservas/add_reservation2.dart';
+import 'package:VisalApp/screens/informes/informes_page.dart';
+import 'package:VisalApp/screens/reports/add_report_screen.dart';
+import 'package:VisalApp/screens/reports/report_screen.dart';
+import 'package:VisalApp/screens/reservas/add_reservation2.dart';
 
-import 'package:reservas_theo/screens/reservas/reservas.dart'; //vistas respectivas a reservas
-import 'package:reservas_theo/screens/reservas/see_reservation2.dart';
+import 'package:VisalApp/screens/reservas/reservas.dart'; //vistas respectivas a reservas
+import 'package:VisalApp/screens/reservas/see_reservation2.dart';
 
-import 'package:reservas_theo/servicios/firebase_options.dart';
-import 'package:reservas_theo/features/home/home_screen.dart';
-import 'package:reservas_theo/screens/salas/salas.dart'; //vistas respectivas a salas
+import 'package:VisalApp/servicios/firebase_options.dart';
+import 'package:VisalApp/features/home/home_screen.dart';
+import 'package:VisalApp/screens/salas/salas.dart'; //vistas respectivas a salas
 
 void main() async {
   WidgetsFlutterBinding
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'TheoApp',
+      title: 'VisalApp',
       initialRoute: '/login',
       routes: {
         //login y registro

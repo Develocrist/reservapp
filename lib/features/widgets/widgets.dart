@@ -1,1 +1,1 @@
-export 'package:reservas_theo/features/widgets/ui.dart';
+export 'package:VisalApp/features/widgets/ui.dart';

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
 
 //28-08 se necesita importar la id de la reserva, para despues cargar la información de esta en los campos de texto
 //se necesitan 2 botones igual para cambiar el estado de la reserva el cual debe actualizarse en firebase y que sea visible para todos
@@ -17,7 +17,8 @@ class _EditReservationState extends State<EditReservation> {
   String? idReservacion;
   String? asunto = "";
   String? descripcion = "";
-
+  TextEditingController _asuntoController = TextEditingController(text: '');
+  TextEditingController _descripcionController = TextEditingController(text: '');
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -69,95 +70,104 @@ class _EditReservationState extends State<EditReservation> {
         title: const Text('Modificar reserva'),
       ),
       body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'ID de Reserva:',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            idReservacion ?? 'N/A', // Mostrar "N/A" si la ID está vacía
-            style: const TextStyle(
-              fontSize: 20,
-            ),
-          ),
-          const SizedBox(height: 16), // Separación entre elementos
-          const Text(
-            'Asunto:',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          TextField(
-            controller: TextEditingController(
-                text: asunto), // Valor inicial del TextFormField
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(), // Borde alrededor del campo
-            ),
-            maxLength: 20,
-          ),
-          const SizedBox(height: 16),
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'ID de Reserva:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                idReservacion ?? 'N/A', // Mostrar "N/A" si la ID está vacía
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 16), // Separación entre elementos
+              const Text(
+                'Asunto:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextField(
+                controller: _asuntoController, // Valor inicial del TextFormField
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(), // Borde alrededor del campo
+                ),
+                maxLength: 30,
+                onChanged: (value) {
+                  setState(() {
+                    asunto = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
 
-          const Text(
-            'Descripción:',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          TextField(
-            controller: TextEditingController(
-                text: descripcion), // Valor inicial del TextFormField
-            maxLines: 3, // Varias líneas para la descripción
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-            ),
-            maxLength: 50,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Añadir asistentes',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          ListView.builder(
-              shrinkWrap: true,
-              itemCount: usuariosRegistrados.length,
-              itemBuilder: (BuildContext context, int index) {
-                final nombreUsuario = usuariosRegistrados[index];
-                //
-                return CheckboxListTile(
-                  title: Text(nombreUsuario),
-                  value: asistentesSeleccionados.contains(nombreUsuario),
-                  onChanged: (bool? isChecked) {
-                    setState(() {
-                      if (isChecked!) {
-                        asistentesSeleccionados.add(nombreUsuario);
-                      } else {
-                        asistentesSeleccionados.remove(nombreUsuario);
-                      }
-                      print(
-                          'asistentes seleccionados: $asistentesSeleccionados');
-                    });
-                  },
-                );
-              }),
+              const Text(
+                'Descripción:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextField(
+                controller: _descripcionController, // Valor inicial del TextFormField
+                maxLines: 3, // Varias líneas para la descripción
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+                maxLength: 100,
+                onChanged: (value) {
+                  setState(() {
+                    descripcion = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Añadir asistentes',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: usuariosRegistrados.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final nombreUsuario = usuariosRegistrados[index];
+                    return CheckboxListTile(
+                      title: Text(nombreUsuario),
+                      value: asistentesSeleccionados.contains(nombreUsuario),
+                      onChanged: (bool? isChecked) {
+                        setState(() {
+                          if (isChecked!) {
+                            asistentesSeleccionados.add(nombreUsuario);
+                          } else {
+                            asistentesSeleccionados.remove(nombreUsuario);
+                          }
+                          print(
+                              'asistentes seleccionados: $asistentesSeleccionados');
+                        });
+                      },
+                    );
+                  }),
 
-          ElevatedButton(
-            onPressed: () {
-              actualizarReserva();
-            },
-            child: const Text('Guardar Cambios'),
-          ),
-        ],
-      )),
+              ElevatedButton(
+                onPressed: () {
+                  actualizarReserva();
+                },
+                child: const Text('Guardar Cambios'),
+              ),
+            ],
+          )),
     );
   }
 

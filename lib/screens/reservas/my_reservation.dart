@@ -3,9 +3,13 @@
 //19/06: POR AHORA SOLO EL ESQUELETO
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:googleapis_auth/googleapis_auth.dart' as auth;
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
 
 class MyReservation extends StatefulWidget {
   const MyReservation({Key? key}) : super(key: key);
@@ -15,6 +19,9 @@ class MyReservation extends StatefulWidget {
 }
 
 class _MyReservationState extends State<MyReservation> {
+  //---------------- sincronizacion con google
+
+  //---------------------
   List<Reservation> _reservations = [];
 
   String? _userUid; //variable donde se recibe la uid
@@ -84,15 +91,12 @@ class _MyReservationState extends State<MyReservation> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.9,
               child: ListView.builder(
-                shrinkWrap: true,
-                // physics: ClampingScrollPhysics(),
+                shrinkWrap: true,                
                 itemCount: _reservations.length,
                 itemBuilder: (context, index) {
                   Reservation reservation = _reservations[index];
                   DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-                  DateFormat timeFormat = DateFormat(
-                      'HH:mm'); // Personaliza el diseño de cada elemento de la lista con los datos de la reserva
-
+                  DateFormat timeFormat = DateFormat('HH:mm'); // Personaliza el diseño de cada elemento de la lista con los datos de la reserva
                   return Dismissible(
                     onDismissed: (direction) async {
                       await eliminarReserva(reservation.idreserva ?? '');
@@ -104,7 +108,7 @@ class _MyReservationState extends State<MyReservation> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text('¿Desea eliminar esta reserva?'),
+                            title: const Text('¿Desea eliminar esta reserva?'),
                             actions: [
                               TextButton(
                                   onPressed: () {
@@ -170,6 +174,10 @@ class _MyReservationState extends State<MyReservation> {
                                         await actualizarEstadoSala(
                                             reservation.ubicacion!,
                                             'En uso por $usuarioUso');
+                                        //----------------
+                                        // await syncReservationWithGoogleCalendar(
+                                        //     reservation);
+                                        //-----------
                                         SnackbarHelper.showSnackbar(
                                             context, 'Estado actualizado');
                                       },
@@ -185,7 +193,8 @@ class _MyReservationState extends State<MyReservation> {
                                       child: const Text('Terminar')),
                                   ElevatedButton(
                                       onPressed: () {
-                                        Navigator.pushNamed(context, '/editMyReservation',
+                                        Navigator.pushNamed(
+                                            context, '/editMyReservation',
                                             arguments: {
                                               "idReserva": reservation.idreserva
                                             });
@@ -279,7 +288,7 @@ Future<void> actualizarEstadoSala(String nombreSala, String nuevoEstado) async {
       print('No se encontro la sala');
     }
   } catch (e) {
-    print('Hubo un error $e');
+    print('Hubo un error al actualizar el estado: $e');
   }
 }
 
@@ -296,3 +305,48 @@ Future<void> eliminarReserva(String idReserva) async {
   }
 }
 
+// Future<void> syncReservationWithGoogleCalendar(Reservation reservation) async {
+//   User? user = FirebaseAuth.instance.currentUser;
+//   if (user != null) {
+//     String? accessToken = await user.getIdToken();
+//     if (accessToken != null) {
+//       final _googleSignIn = GoogleSignIn(
+//           scopes: ['profile', 'email', calendar.CalendarApi.calendarScope]);
+//       try {
+//         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+//         if (googleUser == null) return; // El usuario canceló la autenticación
+//         final GoogleSignInAuthentication googleAuth =
+//             await googleUser.authentication;
+//         final auth.AccessCredentials credentials = auth.AccessCredentials(
+//           accessToken: googleAuth.accessToken,
+//           refreshToken: googleAuth.refreshToken,
+//           idToken: googleAuth.idToken,
+//           scopes: ['profile', calendar.CalendarApi.calendarScope],
+//         );
+//         final calendarApi = calendar.CalendarApi(auth.ClientId('', ''),
+//             authenticatedClient:
+//                 auth.authenticatedClientFromCredentials(credentials));
+
+//         final calendar.Event event = calendar.Event()
+//           ..summary = reservation.asunto
+//           ..description = reservation.descripcion ?? ''
+//           ..start =
+//               calendar.EventDateTime.dateTime(reservation.horaInicio.toUtc())
+//           ..end = calendar.EventDateTime.dateTime(reservation.horaFin.toUtc());
+
+//         // Asegúrate de proporcionar un ID único para el evento
+//         event.id = reservation.idreserva;
+
+//         await calendarApi.events.insert(event, 'primary');
+
+//         print('Reserva sincronizada con Google Calendar');
+//       } catch (e) {
+//         print('Error al sincronizar la reserva con Google Calendar: $e');
+//       }
+//     } else {
+//       print('No se pudo obtener el Access Token');
+//     }
+//   } else {
+//     print('usuario no autenticado');
+//   }
+// }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
 import 'package:intl/intl.dart';
-import 'package:reservas_theo/screens/reservas/horas_reservas.dart';
+import 'package:VisalApp/screens/reservas/horas_reservas.dart';
 
 class ReservationScreen2 extends StatefulWidget {
   @override
@@ -242,7 +242,7 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
         title: const Text('Crear Reserva'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(15),
         child: Column(
           children: [
             TextField(
@@ -252,15 +252,18 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
               decoration: const InputDecoration(labelText: 'Usuario'),
             ),
             TextField(
-              maxLength: 20,
+              maxLength: 30,
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Asunto reserva:',
+                labelText: 'Asunto:',
+                border: OutlineInputBorder(),
               ),
             ),
             TextField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Detalles:'),
+              decoration: const InputDecoration(labelText: 'Detalles:', border: OutlineInputBorder(),),
+              maxLength: 300,
+              
             ),
             const SizedBox(height: 16),
             Text(fechaSeleccionada != null
@@ -273,7 +276,7 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Seleccionar Sala:      '),
+                const Text('Sala: '),
                 DropdownButton<String>(
                   value: selectedSala,
                   onChanged: (String? newValue) {
@@ -307,7 +310,7 @@ class _ReservationScreen2State extends State<ReservationScreen2> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Seleccionar Bloque: '),
+                const Text('Bloque Horario: '),
                 DropdownButton<Horas>(
                   value:
                       selectedHoras, // La hora seleccionada en el DropdownButton

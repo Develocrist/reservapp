@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reservas_theo/servicios/firebase_service.dart';
+import 'package:VisalApp/servicios/firebase_service.dart';
 
 class DetailsRoomScreen extends StatefulWidget {
   const DetailsRoomScreen({Key? key}) : super(key: key);
@@ -53,21 +53,23 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Nombre de sala: $nombre',
+                            '$nombre\n',
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                          Text('Capacidad: ${room['capacidad']} personas.'),
-                          Text('Descripción: ${room['descripcion']}'),
-                          Text('Ubicación: ${room['ubicacion']}'),
+                          Text('Capacidad: ${room['capacidad']} Personas.\n'),
+                          Text('Descripción:${room['descripcion']}\n'),
+                          Text('Ubicación: ${room['ubicacion']}\n'),
                           Text(
-                              'Dimensiones (Metros): \nAlto: ${room['alto_sala']} MT , Ancho: ${room['ancho_sala']} MT, Largo: ${room['largo_sala']} MT'),
+                              'Dimensiones (Metros):\nAlto: ${room['alto_sala']} MT\nAncho: ${room['ancho_sala']} MT\nLargo: ${room['largo_sala']} MT\n'),
                           Text(
-                              'Actividades admitidas: ${room['actividades_admitidas']}'),
-                          Text('Estado actual: ${room['estado']}'),
-                          Container(
+                              'Actividades admitidas:\n${room['actividades_admitidas']}\n'),
+                          Text('Estado actual: ${room['estado']}\n'),
+                          const Text('Imagen referencial:\n'),
+                          SizedBox(
                             width: 300,
                             height: 200,
                             //color: Colors.red,
@@ -82,24 +84,24 @@ class _DetailsRoomScreenState extends State<DetailsRoomScreen> {
                           const SizedBox(
                             height: 20,
                           ),
-                          FloatingActionButton(
-                            backgroundColor: Colors.green,
-                            onPressed: () async {
-                              String idSala = room['uid'];
-                              print(idSala);
-                              await Navigator.pushNamed(context, '/update_room',
-                                  //se envian los argumentos para luego abrir la modificacion y que estos ya se encuentren reemplazados para su modificacion
-                                  arguments: {
-                                    "id_sala": idSala,
-                                    "nombre": snapshot.data?[index]['nombre'],
-                                  });
+                          // FloatingActionButton(
+                          //   backgroundColor: Colors.green,
+                          //   onPressed: () async {
+                          //     String idSala = room['uid'];
+                          //     print(idSala);
+                          //     await Navigator.pushNamed(context, '/update_room',
+                          //         //se envian los argumentos para luego abrir la modificacion y que estos ya se encuentren reemplazados para su modificacion
+                          //         arguments: {
+                          //           "id_sala": idSala,
+                          //           "nombre": snapshot.data?[index]['nombre'],
+                          //         });
 
-                              setState(() {});
-                            },
-                            child: const Icon(
-                              Icons.edit,
-                            ),
-                          )
+                          //     setState(() {});
+                          //   },
+                          //   child: const Icon(
+                          //     Icons.edit,
+                          //   ),
+                          // )
                         ],
                       ),
                     ),

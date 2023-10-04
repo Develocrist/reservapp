@@ -5,10 +5,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:reservas_theo/features/widgets/widgets.dart';
-import 'package:reservas_theo/servicios/firebase_service.dart';
+import 'package:VisalApp/features/widgets/widgets.dart';
+import 'package:VisalApp/screens/salas/salas.dart';
+import 'package:VisalApp/servicios/firebase_service.dart';
 
-//import 'package:reservas_theo/servicios/upload_image.dart';
+//import 'package:VisalApp/servicios/upload_image.dart';
 
 class AddRoomScreen extends StatefulWidget {
   const AddRoomScreen({Key? key}) : super(key: key);
@@ -36,9 +37,13 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       appBar: AppBar(
         title: const Text('Añadir sala'),
         actions: [
+          const Center(
+            child: Text('Información'),
+          ),
           IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              AlertDialogHelper.showAlertDialog(context, 'Información:',
+                  'Permite ingresar una sala a la Aplicación, para despues permitir las siguientes acciones: \n 1.- Consultar la información general de la sala. \n 2.- Visualizar a los usuarios que hagan uso de esta. \n 3.- Manejar y visualizar estados de la sala. \n 4.-  Seleccionar la sala para reservas. \n 5.- Generar reportes sobre dicha sala. \n 6.- Generar informe de usabilidad de la sala.');
             },
             icon: const Icon(Icons.info),
           ),
@@ -48,84 +53,116 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Información General: ',
-                style: TextStyle(fontSize: 16),
+              const Text('Descripción de la Sala',
+                  style: TextStyle(fontSize: 16)),
+              const SizedBox(
+                height: 16,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: roomNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nombre',
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.phone,
-                      controller: roomCapacityController,
-                      decoration: const InputDecoration(
-                        labelText: 'Capacidad',
-                      ),
-                    ),
-                  )
-                ],
+              TextField(
+                controller: roomNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre de sala',
+                  border: OutlineInputBorder(),
+                ),
+                maxLength: 20,
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(
+                height: 15,
+              ),
+                TextField(
+                keyboardType: TextInputType.phone,
+                controller: roomCapacityController,
+                decoration: const InputDecoration(
+                  labelText: 'Capacidad',
+                  suffixText: 'Personas',
+                  border: OutlineInputBorder(),
+                ),
+                maxLength: 2,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
               TextField(
                 controller: roomDescriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Descripción de la sala',
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 40, horizontal: 10),
+                  border: OutlineInputBorder(),
                 ),
+                maxLines: null,
+                maxLength: 500,
+                textAlignVertical: TextAlignVertical.top,
+              ),
+              const SizedBox(
+                height: 16,
               ),
               TextField(
                 controller: roomUbicacion,
                 decoration: const InputDecoration(
-                  labelText: 'Ubicación de la sala',
-                ),
+                    labelText: 'Ubicación de la sala',
+                    border: OutlineInputBorder()),
+                maxLength: 100,
               ),
               const SizedBox(height: 16.0),
-              const Text('Dimensiones (Metros)',
+              const Text('Dimensiones de la Sala:',
                   style: TextStyle(fontSize: 16)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: roomLargo,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(labelText: 'Largo'),
-                    ),
-                  ),
-                  SizedBox(width: 16.0),
-                  Expanded(
-                    child: TextFormField(
-                      controller: roomAncho,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(labelText: 'Ancho'),
-                    ),
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      controller: roomAlto,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(labelText: 'Alto'),
-                    ),
-                  ),
-                ],
+              const SizedBox(
+                height: 16,
+              ),
+              TextFormField(
+                controller: roomLargo,
+                maxLength: 2,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                    labelText: 'Largo', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: roomAncho,
+                keyboardType: TextInputType.number,
+                maxLength: 2,
+                decoration: const InputDecoration(
+                    labelText: 'Ancho', border: OutlineInputBorder()),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              TextFormField(
+                controller: roomAlto,
+                maxLength: 2,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                    labelText: 'Alto', border: OutlineInputBorder()),
               ),
               const SizedBox(
                 height: 16,
               ),
               //radio buttons para los tipos de actividades que se admiten
-              const Text(
-                'Actividades admitidas',
-                style: TextStyle(fontSize: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Actividades admitidas',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      AlertDialogHelper.showAlertDialog(
+                          context,
+                          '¿Qué son actividades admitidas?',
+                          'Las actividades admitidas comprenden una variedad de acciones típicamente llevadas a cabo en las diversas salas disponibles. \n Esto facilitará al usuario la elección de una sala adecuada para llevar a cabo su actividad.');
+                    },
+                    icon: const Icon(Icons.info_outline),
+                    color: Colors.blue[800],
+                  )
+                ],
+              ),
+
+              const SizedBox(
+                height: 16,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -214,6 +251,8 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
               ),
 
               const SizedBox(height: 16.0),
+
+              const Text('Cargar Imagen:'),
               Column(
                 children: [
                   for (var i = 0; i < imagesToUpload.length; i++)
@@ -254,7 +293,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                 child: const Text('Agregar Imagen'),
               ),
 
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () async {
                   // Asignación de los campos en el form a variables con determinado tipo de variable para luego enviarlos a firebase_service.dart
                   String roomName = roomNameController.text; //nombre de sala
@@ -270,7 +309,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                   List<String> actividades_admitidas = _selectedOptions;
 
                   String estado = 'Disponible';
-                  
 
                   String imageurl = await uploadImages();
 
@@ -291,9 +329,9 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                     },
                   );
                 },
-                child: const Text('Añadir sala a firebase'),
+                label: const Text('Añadir Sala'),
+                icon: const Icon(Icons.add_business_outlined),
               ),
-              
             ],
           ),
         ),

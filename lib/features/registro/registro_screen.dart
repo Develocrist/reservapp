@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:reservas_theo/features/login/login_screen.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
-import 'package:reservas_theo/provider/ProviderState.dart';
+import 'package:VisalApp/features/login/login_screen.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
+import 'package:VisalApp/provider/ProviderState.dart';
 
 class ProviderRegistration extends StatefulWidget {
   const ProviderRegistration({super.key});
@@ -30,42 +30,32 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
             child: Form(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   const Text(
-                    'Registrate en TheoApp',
+                    'Antes de comenzar... Registrate.',
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  // SizedBox(height: 16.0),
-                  // TextFormField(
-                  //   decoration: const InputDecoration(
-                  //     labelText: 'Nombre',
-                  //   ),
-                  //   validator: (value) {
-                  //     if (value!.isEmpty) {
-                  //       return 'Ingrese un nombre válido';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
                   const SizedBox(height: 16.0),
                   TextFormField(
                     decoration: const InputDecoration(
-                      labelText: 'Nombre de usuario', 
+                      labelText: 'Nombre de usuario',
+                      border: OutlineInputBorder(),
                     ),
                     controller: nombre,
                     maxLength: 10,
                   ),
-                  
                   TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Correo electrónico',
+                      border: OutlineInputBorder(),
                     ),
+                    maxLength: 30,
                     controller: correo,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -74,11 +64,37 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16.0),
+                  
                   TextFormField(
                     decoration: const InputDecoration(
-                      labelText: 'Organización',
+                      labelText: 'Contraseña',
+                      border: OutlineInputBorder(),
                     ),
+                    maxLength: 10,
+                    obscureText: true,
+                    controller: password,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Ingrese una contraseña válida';
+                      }
+                      return null;                      
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    maxLength: 15,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                        labelText: 'Organización',
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            AlertDialogHelper.showAlertDialog(
+                                context,
+                                '¿Qué es esto?',
+                                'El campo Organización corresponde a un identificador único entregado a la organización, con la finalidad de no permitir el registro de cualquier usuario, sino solo aquellos autorizados por la organización que haga uso de esta Aplicación.');
+                          },
+                          icon: const Icon(Icons.info_outline),
+                        )),
                     controller: organizacion,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -87,42 +103,31 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Contraseña',
-                    ),
-                    obscureText: true,
-                    controller: password,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese una contraseña válida';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24.0),
-                  ElevatedButton(
+                  const SizedBox(height: 16.0),
+                  ElevatedButton.icon(
                     onPressed: () {
                       //validacion de la organización, se debe cambiar por algo mas profesional
                       final String organizacionText = organizacion.text;
-
                       //registro de usuario con rol de usuario
-                      if (nombre.text.isNotEmpty && correo.text.isNotEmpty &&
+                      if (nombre.text.isNotEmpty &&
+                          correo.text.isNotEmpty &&
                           password.text.isNotEmpty &&
                           organizacionText.toLowerCase().contains('umd')) {
                         String rol = 'Usuario común';
-                        registerUser(nombre.text ,correo.text, password.text, rol, context);
+                        registerUser(nombre.text, correo.text, password.text,
+                            rol, context);
                         SnackbarHelper.showSnackbar(
                             context, 'Registro de Usuario exitoso');
                       } //registro de usuario con rol de administrador
-                      else if (nombre.text.isNotEmpty && correo.text.isNotEmpty &&
+                      else if (nombre.text.isNotEmpty &&
+                          correo.text.isNotEmpty &&
                           password.text.isNotEmpty &&
                           organizacionText
                               .toLowerCase()
-                              .contains('admi_theoapp')) {
+                              .contains('admi_visalapp')) {
                         String rol = 'Administrador';
-                        registerUser(nombre.text, correo.text, password.text, rol, context);
+                        registerUser(nombre.text, correo.text, password.text,
+                            rol, context);
                         SnackbarHelper.showSnackbar(
                             context, 'Registro de Administrador exitoso');
                       } else {
@@ -133,7 +138,7 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                             return AlertDialog(
                               title: const Text('Error al registrar'),
                               content: const Text(
-                                  'Porfavor, ingrese todos los campos y asegurese de que la organización ingresada sea válida.'),
+                                  'Porfavor, ingrese todos los campos y asegurese de que la organización ingresada sea una válida.'),
                               actions: <Widget>[
                                 TextButton(
                                     child: const Text('Aceptar'),
@@ -146,9 +151,10 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                         );
                       }
                     },
-                    child: const Text('Registrarse'),
+                    label: const Text('Registrarse'),
+                    icon: Icon(Icons.app_registration_outlined),
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height:  16.0),
                   //volver al login
                   TextButton(
                     onPressed: () {
@@ -169,7 +175,8 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
   }
 
 //metodo registro de usuario, el cual
-  void registerUser(String nombre, String email, String password, rol, context) async {
+  void registerUser(
+      String nombre, String email, String password, rol, context) async {
     ProviderState providerState =
         Provider.of<ProviderState>(context, listen: false);
 
@@ -178,6 +185,9 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const ProviderLogin()));
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Hubo un error al registrar el usuario $e');
+
+    }
   }
 }

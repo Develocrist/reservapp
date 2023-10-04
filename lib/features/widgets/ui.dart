@@ -36,7 +36,7 @@ class AlertDialogHelper {
             actions: <Widget>[
               TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'))
+                  child: const Text('Cerrar'))
             ],
           );
         });

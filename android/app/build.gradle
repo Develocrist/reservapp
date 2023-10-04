@@ -34,6 +34,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    signingConfigs {
+        release {
+            keyAlias 'key'
+            keyPassword 'gatitatheo_1996'
+            storeFile file('visalapp.jks')
+            storePassword 'gatitatheo_1996'
+        }
+    }
 
     kotlinOptions {
         jvmTarget = '1.8'

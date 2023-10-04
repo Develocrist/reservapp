@@ -5,7 +5,7 @@ FirebaseFirestore db = FirebaseFirestore.instance;
 //funcion que nos trae la información de las salas que se crean en firebase
 
 Future<List> getSalas() async {
-  List salas = [];
+  List salas = [];  
   QuerySnapshot queryPersonas = await db
       .collection('salas')
       .get(); //esta linea trae toda la colección de salas contenidas en firebase
@@ -29,7 +29,6 @@ Future<List> getSalas() async {
     };
     salas.add(sala);
   }
-
   return salas;
 }
 
@@ -48,19 +47,23 @@ Future<void> addSalas(
   String urlImagen,
   //--------------------------
 ) async {
-  await db.collection('salas').add({
-    "nombre": name,
-    "capacidad": capacity,
-    "descripcion": description,
-    "ubicacion": ubication,
-    "largo_sala": large,
-    "ancho_sala": ancho,
-    "alto_sala": alto,
-    "actividades_admitidas": listaActividades,
+  try {
+    await db.collection('salas').add({
+      "nombre": name,
+      "capacidad": capacity,
+      "descripcion": description,
+      "ubicacion": ubication,
+      "largo_sala": large,
+      "ancho_sala": ancho,
+      "alto_sala": alto,
+      "actividades_admitidas": listaActividades,
 //------------------------------------------------
-    "estado": estado,
-    "url_imagen": urlImagen
-  });
+      "estado": estado,
+      "url_imagen": urlImagen
+    });
+  } catch (e) {
+    print('Hubo un problema al subir la sala: $e');
+  }
 }
 
 //actualizar el nombre de la persona en la base de datos

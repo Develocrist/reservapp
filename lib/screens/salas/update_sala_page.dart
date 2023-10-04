@@ -5,8 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
-import 'package:reservas_theo/servicios/firebase_service.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
+import 'package:VisalApp/servicios/firebase_service.dart';
 
 class UpdateRoomScreen extends StatefulWidget {
   const UpdateRoomScreen({Key? key}) : super(key: key);

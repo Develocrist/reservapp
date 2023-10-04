@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
-import 'package:reservas_theo/servicios/firebase_service.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
+import 'package:VisalApp/servicios/firebase_service.dart';
 
 class SeeRoomScreen extends StatefulWidget {
   const SeeRoomScreen({super.key});
@@ -43,11 +43,24 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
   }
 
   //----------------------
+  // //supuesta actualizacion
+  // Future<void> _updateRoomData() async {
+  //   //obtiene los datos de la sala
+  //   List<Map<String, dynamic>> rooms =
+  //       List<Map<String, dynamic>>.from(await getSalas());
+  //   setState(() {
+  //     dataList = rooms.map((room) => room['nombre'].toString()).toList();
+  //     filteredList = dataList;
+  //     print('lista actualizada $filteredList');
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
     String? rol = arguments['rol'];
     String? username = arguments['nombre'];
+    print('nombre de usuario: $username');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Salas'),
@@ -75,7 +88,7 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                 },
                 icon: const Icon(Icons.report_gmailerrorred),
                 iconSize: 40,
-              )
+              ),
             ],
           ),
         ],
@@ -88,7 +101,7 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
               filterList(value);
               //print(filteredList);
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 labelText: 'Buscar sala', prefixIcon: Icon(Icons.search)),
           ),
         ),
@@ -102,11 +115,15 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                   itemBuilder: ((context, index) {
                     return Dismissible(
                       onDismissed: (direction) async {
-                        await deleteSalas(snapshot.data?[index]['uid']);
-                        //print('sala eliminada');
-                        setState(() {
-                          filteredList.removeAt(index);
-                        });
+                        if (snapshot.data != null &&
+                            snapshot.data!.isNotEmpty) {
+                          final uidSalita = snapshot.data?[index]['uid'];
+                          print('uid sala a eliminar: $uidSalita');
+                          if (uidSalita.isNotEmpty) {
+                            await deleteSalas(uidSalita ?? '');
+                            print('sala eliminada');
+                          }
+                        }
                       },
                       confirmDismiss: (direction) async {
                         if (rol != 'Administrador') {
@@ -188,11 +205,12 @@ class _SeeRoomScreenState extends State<SeeRoomScreen> {
                             IconButton(
                                 onPressed: () async {
                                   await Navigator.pushNamed(
-                                      context, '/addReport', arguments: {
-                                    "uid": snapshot.data?[index]['uid'],
-                                    "name": snapshot.data?[index]['nombre'],
-                                    'nombreusuario': username
-                                  });
+                                      context, '/addReport',
+                                      arguments: {
+                                        "uid": snapshot.data?[index]['uid'],
+                                        "name": snapshot.data?[index]['nombre'],
+                                        'nombreusuario': username
+                                      });
                                 },
                                 icon: const Icon(
                                   Icons.report_gmailerrorred,

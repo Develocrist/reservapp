@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
 import 'package:screenshot/screenshot.dart';
 
 class ReservationScreen extends StatefulWidget {

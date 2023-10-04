@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-import 'package:reservas_theo/features/home/home_screen.dart';
-import 'package:reservas_theo/features/registro/registro_screen.dart';
-import 'package:reservas_theo/features/widgets/ui.dart';
-import 'package:reservas_theo/provider/ProviderState.dart';
+import 'package:VisalApp/features/home/home_screen.dart';
+import 'package:VisalApp/features/registro/registro_screen.dart';
+import 'package:VisalApp/features/widgets/ui.dart';
+import 'package:VisalApp/provider/ProviderState.dart';
 
 class ProviderLogin extends StatefulWidget {
   const ProviderLogin({super.key});
@@ -54,82 +54,122 @@ class _ProviderLoginState extends State<ProviderLogin> {
       }
     }
 
-    return Scaffold(
+    return Scaffold(      
       body: Container(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const Text(
-              'Login a TheoApp',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 100,),
+              SizedBox(
+                width: 200,
+                height: 170,              
+                child: Image.asset('assets/logoapp.png', fit: BoxFit.fill,)
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16.0),
-            TextFormField(
-              controller: email,
-              decoration: const InputDecoration(
-                labelText: 'Correo electrónico',
+              const Text(
+                'Login',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 16.0),
-            TextFormField(
-              controller: pass,
-              decoration: const InputDecoration(
-                labelText: 'Contraseña',
+              const SizedBox(height: 16.0),            
+              TextFormField(
+                controller: email,
+                decoration: const InputDecoration(
+                  labelText: 'Correo electrónico',
+                  border: OutlineInputBorder()
+                ),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 24.0),
-            ElevatedButton(
-              onPressed: () {
-                if (email.text.isNotEmpty && pass.text.isNotEmpty) {
-                  _login(email.text, pass.text);
-                } else {           
-                  AlertDialogHelper.showAlertDialog(context, 'Error al ingresar',
-                    'Rellene los campos y asegurese de que sean credenciales válidas');       
-                }
-                
-              },             
-              child: const Text('Iniciar sesión'),
-            ),
-            const SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () async {
-                // Iniciar sesión con Google
-                signInWithGoogle().then((UserCredential? userCredential) {
-                  if (userCredential != null) {
-                    // El inicio de sesión fue exitoso, puedes realizar acciones adicionales aquí
-                    print(
-                        'Inicio de sesión exitoso: ${userCredential.user!.displayName}');
-                    String? nombre_usuario = userCredential.user!.displayName;
-                    Navigator.popAndPushNamed(context, '/home', arguments: {
-                      'nombre_usuario': nombre_usuario,
-                    });
-                  } else {
-                    SnackbarHelper.showSnackbar(
-                        context, 'Hubo un problema al iniciar sesión');
-                  }
-                });
-              },
-              child: const Text('Iniciar sesión con Google'),
-            ),
-            const SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProviderRegistration()));
-              },
-              child: const Text('Crear cuenta'),
-            ),
-            const Text('V1.0.0') //versión actual de la aplicación
-          ],
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: pass,
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                  border: OutlineInputBorder()
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 24.0),
+              SizedBox(
+                height: 60,
+                width: 250,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    if (email.text.isNotEmpty && pass.text.isNotEmpty) {
+                      _login(email.text, pass.text);
+                    } else {
+                      AlertDialogHelper.showAlertDialog(
+                          context,
+                          'Error al ingresar',
+                          'Rellene los campos y asegurese de que sean credenciales válidas');
+                    }
+                  },
+                  label: const Text('Iniciar sesión'),
+                  icon: Icon(Icons.person_2_outlined),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              SizedBox(
+                height: 60,
+                width: 250,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    try {
+                      // Iniciar sesión con Google
+                      signInWithGoogle().then((UserCredential? userCredential) {
+                        if (userCredential != null) {
+                          // El inicio de sesión fue exitoso, puedes realizar acciones adicionales aquí
+                          print(
+                              'Inicio de sesión exitoso: ${userCredential.user!.displayName}');
+                          String? nombre_usuario = userCredential.user!.displayName;
+                          Navigator.popAndPushNamed(context, '/home', arguments: {
+                            'nombre_usuario': nombre_usuario,
+                          });
+                        } else {
+                          SnackbarHelper.showSnackbar(
+                              context, 'Hubo un problema al iniciar sesión');
+                        }
+                      });
+                    } catch (e) {
+                      print('hubo un error al iniciar con google');
+                    }
+                  },
+                  label: const Text('Ingresar con Google'),
+                  icon: Icon(Icons.g_mobiledata_outlined),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const ProviderRegistration()));
+                    },
+                    child: const Text('Crear cuenta'),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        AlertDialogHelper.showAlertDialog(
+                            context,
+                            'Bienvenid@ a VisalApp',
+                            'Esta aplicación te permitirá visualizar, reservar y obtener información en tiempo real y actualizada, respecto al estado actual de las salas y actividades de tu organización.');
+                      },
+                      child: const Text('¿Qué hace esta App?')),
+                ],
+              ),
+          
+              const Text('Versión 1.0.0'), //versión actual de la aplicación
+            ],
+          ),
         ),
       ),
     );
